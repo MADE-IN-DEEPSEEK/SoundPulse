@@ -5,7 +5,7 @@
   "description": "Звуковая пушка для игр и голосовых чатов: музыка, мемы и любые звуки в микрофон.",
   "main": "src/main.js",
   "author": "SoundPulse",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "electron .",
