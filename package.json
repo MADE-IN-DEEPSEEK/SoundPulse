@@ -1,0 +1,73 @@
+{
+  "name": "soundpulse",
+  "productName": "SoundPulse",
+  "version": "2.0.0",
+  "description": "Звуковая пушка для игр и голосовых чатов: музыка, мемы и любые звуки в микрофон.",
+  "main": "src/main.js",
+  "author": "SoundPulse",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "smoke": "set SMOKE=1&& electron .",
+    "pack": "electron-builder --win --x64 --dir",
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "43.3.0",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.soundpulse.app",
+    "productName": "SoundPulse",
+    "copyright": "Copyright © 2026 SoundPulse",
+    "compression": "maximum",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "icon.ico"
+        ]
+      },
+      {
+        "from": "build/helpers",
+        "to": "helpers",
+        "filter": [
+          "*.exe"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SoundPulse",
+      "include": "build/installer.nsh",
+      "artifactName": "${productName} Setup ${version}.${ext}",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

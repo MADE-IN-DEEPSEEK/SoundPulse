@@ -1,0 +1,2458 @@
+*{box-sizing:border-box}
+@font-face{
+  font-family:'ParadiseGarden';
+  src:url('fonts/ParadiseGarden.otf') format('opentype');
+  font-weight:400;
+  font-display:swap;
+}
+:root{
+  --bg:#080b12;
+  --panel:rgba(31,43,70,.48);
+  --panel2:rgba(20,28,47,.62);
+  --line:rgba(170,200,255,.18);
+  --text:#e9edf7;
+  --muted:#8d9ab5;
+  --blue:#55a9ff;
+  --blue2:#3989ed;
+}
+html,body{width:100%;height:100%;margin:0}
+body{
+  overflow:hidden;
+  color:var(--text);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(1100px 640px at 52% -4%,rgba(52,110,205,.17),transparent 62%),
+    linear-gradient(160deg,#0a0e18 0%,#04060b 55%,#020307 100%);
+  font-size:14px;
+}
+button,input{font:inherit;color:inherit}
+button{border:0;cursor:pointer}
+.glass{
+  background:linear-gradient(180deg,rgba(23,32,52,.86),rgba(12,17,29,.9));
+  border:1px solid rgba(148,178,230,.14);
+  box-shadow:0 12px 34px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.05);
+}
+
+/* top window */
+.titlebar{
+  height:38px;
+  display:flex;
+  align-items:center;
+  padding:0 8px 0 12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 50%),rgba(15,19,27,.72);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  -webkit-app-region:drag;
+}
+.title{font-size:12px;letter-spacing:.3px;color:#e5e8ee}
+.window-controls{margin-left:auto;display:flex;height:100%;-webkit-app-region:no-drag}
+.win{
+  width:46px;background:transparent;color:#cbd0da;font-size:15px;
+  transition:background .15s ease,color .15s ease,transform .1s ease;
+}
+.win:hover{background:rgba(255,255,255,.08)}
+.win:active{transform:scale(.9)}
+.win.close:hover{background:#c43b48;color:white}
+
+/* header */
+.header{
+  height:63px;
+  margin:8px 7px 10px;
+  border-radius:32px;
+  display:flex;
+  align-items:center;
+  padding:0 12px 0 7px;
+}
+.logo{
+  width:56px;height:56px;border-radius:50%;
+  display:block;object-fit:cover;flex-shrink:0;
+  background:none;border:1px solid rgba(170,200,255,.22);
+  box-shadow:0 5px 15px rgba(0,0,0,.38);
+}
+.brand{
+  font-family:'ParadiseGarden',Arial,sans-serif;
+  font-weight:400;font-size:30px;line-height:1;letter-spacing:.4px;
+  margin-left:12px;white-space:nowrap;user-select:none;
+  color:#a8d4ff;opacity:.85;
+  transform:translateY(-1px);
+  text-shadow:
+    0 0 8px rgba(140,200,255,.5),
+    0 0 26px rgba(120,190,255,.65),
+    0 0 60px rgba(110,180,255,.45),
+    0 2px 5px rgba(0,0,0,.4);
+}
+.search{
+  height:34px;width:min(420px,36vw);
+  border-radius:18px;margin-left:12px;
+  padding:0 16px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(8,13,22,.58);
+  outline:none;color:#dfe5f3;
+}
+.search::placeholder{color:#7f8ba2}
+.search:focus{border-color:rgba(88,164,255,.5);box-shadow:0 0 0 3px rgba(61,139,255,.09)}
+.search{transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.top-actions{display:flex;gap:8px;margin-left:14px}
+.btn{
+  height:34px;padding:0 15px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(105,119,145,.38),rgba(67,77,99,.32));
+  border:1px solid rgba(255,255,255,.1);
+  color:#e7ebf4;
+  box-shadow:inset 0 1px rgba(255,255,255,.08);
+}
+.btn:hover{background:rgba(105,125,158,.48)}
+.btn .icon{opacity:.9;margin-right:5px}
+.spacer{flex:1}
+
+/* main */
+.main{
+  display:flex;gap:11px;
+  height:calc(100vh - 195px);
+  padding:0 7px;
+}
+.sidebar{
+  width:240px;min-width:240px;border-radius:22px;
+  padding:20px 14px 14px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.section-title{
+  color:#8593ae;font-size:11px;letter-spacing:1.5px;margin:4px 8px 14px;
+}
+.sets{display:flex;flex-direction:column;gap:3px;overflow-y:auto;overflow-x:hidden}
+.set{
+  height:38px;border-radius:10px;padding:0 12px;
+  display:flex;align-items:center;color:#aab5ca;
+  background:transparent;text-align:left;position:relative;
+  transition:background .16s ease,color .16s ease,transform .12s ease;
+}
+.set:hover{background:rgba(255,255,255,.05);color:white}
+.set:active{transform:scale(.98)}
+.set.active{background:rgba(85,143,220,.12);color:#d8e6ff}
+.set.active::before{
+  content:'';position:absolute;left:-14px;top:9px;bottom:9px;width:3px;border-radius:2px;
+  background:linear-gradient(180deg,#6ec8ff,#3ddc84);
+  box-shadow:0 0 10px rgba(110,200,255,.6);
+  animation:barIn .25s ease both;
+}
+@keyframes barIn{from{transform:scaleY(.2);opacity:0}}
+.set .count{
+  margin-left:auto;width:22px;height:22px;border-radius:8px;
+  display:grid;place-items:center;background:rgba(255,255,255,.07);
+  font-size:11px;color:#8290aa;flex-shrink:0;
+  transition:background .16s ease,color .16s ease,transform .18s ease,opacity .15s ease;
+}
+.set.active .count{background:rgba(85,143,220,.2);color:#bcd4ff}
+.set .set-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.set .set-ren,.set .set-del{position:absolute;top:50%;translate:0 -50%;opacity:0;border:0;background:none;pointer-events:none;transition:opacity .14s ease;z-index:2}
+.set .set-ren{right:28px;color:#9dbce9;font-size:11px;padding:0 2px}
+.set .set-del{right:4px;color:#ff7a85;font-size:13px;padding:0 4px}
+.set:hover .set-ren,.set:hover .set-del{opacity:1;pointer-events:auto}
+.set:hover .set-ren:hover{transform:scale(1.25)}
+.set:hover .set-del:hover{transform:scale(1.25)}
+.set:has(.set-ren):hover .count{transform:translateX(-44px);opacity:.35}
+.new-set{
+  margin:7px 4px 0;height:36px;border-radius:18px;
+  border:1px dashed rgba(130,164,215,.22);
+  background:rgba(255,255,255,.015);color:#a9b5c9;
+  transition:border-color .18s ease,color .18s ease,background .18s ease,transform .12s ease;
+}
+.new-set:hover{border-color:rgba(85,168,255,.45);color:#d8e6ff;background:rgba(85,168,255,.05)}
+.new-set:active{transform:scale(.97)}
+.sidebar-bottom{margin-top:auto;border-top:1px solid rgba(255,255,255,.09);padding-top:12px}
+.side-btn{
+  width:100%;height:32px;border-radius:17px;margin-bottom:7px;
+  background:linear-gradient(180deg,rgba(103,111,129,.45),rgba(77,83,97,.42));
+  color:#eef1f7;border:1px solid rgba(255,255,255,.08);
+  transition:transform .12s ease,filter .15s ease,box-shadow .2s ease;
+}
+.side-btn.primary{
+  background:linear-gradient(180deg,#62b3ff,#4a9cf0);
+  box-shadow:0 5px 18px rgba(47,144,255,.22);
+}
+.side-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.side-btn:active{transform:scale(.97)}
+.side-btn.primary:hover{box-shadow:0 7px 24px rgba(47,144,255,.38)}
+
+.content{
+  flex:1;min-width:0;display:flex;flex-direction:column;
+  border-radius:22px;
+  overflow:hidden;
+}
+.nowbar{
+  height:43px;min-height:43px;border-radius:20px;
+  display:flex;align-items:center;padding:0 16px;gap:10px;flex-wrap:nowrap;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 55%),rgba(48,61,90,.42);border:1px solid rgba(165,190,235,.14);
+}
+.now-label{flex:1;min-width:0;color:#aab6cc;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.now-label strong{color:#eef3fc;font-weight:600}
+.now-label strong{font-weight:500;color:#9faac0}
+.now-seek{width:130px;min-width:60px;height:5px;accent-color:#55a9ff;flex-shrink:1}
+.now-time{color:#7f8ba2;font-size:11px;white-space:nowrap;min-width:70px;text-align:center}
+.now-actions{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.small-btn{
+  height:27px;padding:0 9px;border-radius:15px;white-space:nowrap;
+  background:rgba(103,111,130,.35);border:1px solid rgba(255,255,255,.1);
+  color:#dce1ea;font-size:12px;
+}
+.small-btn:hover{background:rgba(120,135,160,.45)}
+.small-btn.active,.fbtn.active{background:rgba(85,168,255,.22);border-color:rgba(85,168,255,.55);color:#9ccbff}
+.grid{
+  padding:15px 4px;
+  display:flex;align-content:flex-start;flex-wrap:wrap;gap:12px;
+  overflow-x:hidden;
+  overflow-y:auto;
+  flex:1;
+}
+.sound{
+  position:relative;
+  width:132px;
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(64,89,139,.58),rgba(28,32,43,.75));
+  border:1px solid rgba(180,204,255,.22);
+  box-shadow:inset 0 1px rgba(255,255,255,.12),inset 0 -1px 14px rgba(120,180,255,.07),0 9px 20px rgba(0,0,0,.14);
+  display:flex;flex-direction:column;gap:6px;
+  padding:7px;
+  transform-style:preserve-3d;
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s;
+  will-change:transform;
+}
+.sound.tilt{transition:transform .05s ease-out,box-shadow .18s ease,border-color .18s}
+.sound::before{
+  content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
+  background:radial-gradient(220px circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.14),transparent 60%);
+  opacity:0;transition:opacity .2s;z-index:1;
+}
+.sound.tilt::before{opacity:1}
+.sound:hover{
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-2px) scale(1.02);
+  border-color:color-mix(in srgb,var(--glow,rgba(111,174,255,.48)) 55%,transparent);
+  box-shadow:0 8px 18px color-mix(in srgb,var(--glow,rgba(44,121,220,.22)) 60%,transparent);
+  z-index:2;
+}
+.sound:active{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(.97)}
+.sound.missing{border-style:dashed;border-color:rgba(255,122,133,.5);opacity:.65}
+.sound.found{outline:2px solid rgba(255,255,255,.45)}
+.sound.sel{border-color:rgba(85,168,255,.9);box-shadow:inset 0 1px rgba(255,255,255,.1),inset 0 0 0 1px rgba(85,168,255,.75),0 9px 20px rgba(0,0,0,.14)}
+.sound.sel:hover{box-shadow:inset 0 0 0 1px rgba(85,168,255,.75),inset 0 1px rgba(255,255,255,.1),0 8px 18px rgba(0,0,0,.16)}
+.grid.multi .sound.sel::after{
+  content:'\2713';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;z-index:5;
+  font-size:20px;font-weight:700;line-height:1;color:#fff;
+  background:rgba(21,101,192,.95);border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 3px 10px rgba(0,0,0,.5);
+  animation:chkPop .22s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes chkPop{from{transform:translate(-50%,-50%) scale(.2);opacity:0}65%{transform:translate(-50%,-50%) scale(1.15);opacity:1}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.sound.pop{animation:cardPop .22s ease}
+@keyframes cardPop{
+  0%{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(.9)}
+  100%{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1)}
+}
+.sound.dragging{opacity:.4}
+.sound.drag-over-card{box-shadow:0 0 0 2px rgba(85,168,255,.65) inset}
+.sound-cover{
+  position:relative;width:100%;aspect-ratio:1/1;border-radius:11px;overflow:hidden;
+  display:grid;place-items:center;
+  background-size:cover;background-position:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.sound-cover.pending{opacity:.6}
+.sound-cover.art-in{animation:coverIn .5s ease}
+@keyframes coverIn{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:scale(1)}}
+.sound-letter{
+  font-size:26px;font-weight:800;color:rgba(255,255,255,.85);
+  text-shadow:0 2px 8px rgba(0,0,0,.45);
+}
+.sound-cover.has-art .sound-letter{display:none}
+.sound-name{
+  font-size:11.5px;text-align:center;line-height:15px;color:#dfe5ef;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  min-height:30px;
+}
+.sound.playing{
+  outline:1px solid color-mix(in srgb,var(--glow,rgba(85,168,255,.55)) 60%,transparent);
+  background:linear-gradient(145deg,rgba(67,116,180,.65),rgba(31,35,48,.8));
+}
+.sound.playing .sound-cover{animation:iconpulse 1.1s ease-in-out infinite}
+.sound.playing .sound-letter{animation:iconpulse 1.1s ease-in-out infinite}
+@keyframes iconpulse{50%{transform:scale(1.06);filter:drop-shadow(0 0 10px var(--glow,rgba(85,168,255,.8)))}}
+.sound.stopped{outline:1px solid rgba(255,120,120,.32);box-shadow:0 0 14px rgba(255,90,90,.12) inset}
+.sound.stopped .sound-cover{filter:saturate(.55) brightness(.8)}
+.stop-badge{
+  position:absolute;right:10px;bottom:15px;width:21px;height:21px;border-radius:50%;
+  background:rgba(226,64,78,.95);border:2px solid rgba(255,255,255,.88);
+  display:grid;place-items:center;font-size:8px;line-height:1;color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);z-index:6;
+  animation:stopIn .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes stopIn{from{transform:scale(.2);opacity:0}60%{transform:scale(1.25);opacity:1}to{transform:scale(1);opacity:1}}
+.badge{font-size:9.5px;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:#8f9cb5;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge.key{color:#ffd479;background:rgba(255,212,121,.13)}
+.badge.vol{color:#8f9cb5}
+.progress{position:absolute;left:9px;right:9px;bottom:8px;height:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden}
+.progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#4ea8ff,#50e69d);border-radius:2px}
+.grid.drag-over{outline:2px dashed rgba(85,168,255,.6);outline-offset:-6px;border-radius:22px}
+
+/* footer */
+.footer{
+  position:fixed;left:7px;right:7px;bottom:7px;height:45px;
+  border-radius:28px;
+  display:flex;align-items:center;padding:0 15px;gap:8px;
+  background:linear-gradient(90deg,rgba(44,58,88,.56),rgba(22,29,46,.56));
+  border:1px solid rgba(170,195,235,.16);
+  z-index:50;
+}
+.fbtn{
+  height:29px;padding:0 11px;border-radius:15px;
+  background:rgba(73,83,103,.4);border:1px solid rgba(255,255,255,.07);
+  color:#d9dee9;font-size:12px;white-space:nowrap;
+}
+.fbtn:hover{background:rgba(105,119,143,.45)}
+.fbtn.green{color:#50e69d;border-color:rgba(70,230,157,.25)}
+.fbtn.green.active{background:rgba(70,230,157,.16)}
+.fbtn.muted{color:#aab3c4}
+.volume{display:flex;align-items:center;gap:7px;color:#aeb7c8;font-size:11px;white-space:nowrap}
+.range{appearance:none;width:86px;height:4px;border-radius:5px;background:#5b6578;outline:none}
+.range::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#4ea8ff;box-shadow:0 0 8px rgba(78,168,255,.4)}
+.footer-right{margin-left:auto;color:#8e99ad;font-size:11px;white-space:nowrap;margin-right:6px}
+.footer-right #eq-bars{
+  display:inline-flex;align-items:flex-end;height:18px;
+  vertical-align:bottom;margin-right:9px;
+}
+::-webkit-scrollbar{width:7px}
+::-webkit-scrollbar-thumb{background:rgba(150,170,205,.18);border-radius:8px}
+
+/* context menu */
+#context-menu{
+  position:fixed;z-index:300;min-width:230px;max-width:300px;
+  border-radius:14px;padding:5px;font-size:12px;
+  background:rgba(24,31,46,.9);
+  border:1px solid rgba(170,200,255,.16);
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 14px 40px rgba(0,0,0,.5);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+}
+.cm-item{
+  padding:8px 11px;border-radius:9px;cursor:pointer;
+  display:flex;align-items:center;gap:9px;color:#d9e0ec;
+  transition:background .14s ease,color .14s ease,transform .1s ease;
+}
+#context-menu .cm-item{animation:cmItem .18s ease both;animation-delay:calc(var(--i,0)*14ms)}
+.cm-item:hover{background:rgba(85,168,255,.16);color:#fff}
+.cm-item:active{transform:scale(.98)}
+.cm-item.danger{color:#ff8b94}
+.cm-item.danger:hover{background:rgba(255,90,105,.16)}
+.cm-item .cm-icon{width:17px;text-align:center;color:#9dbce9;flex-shrink:0;transition:transform .15s ease}
+.cm-item > span:not(.cm-icon):not(.cm-sub){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cm-item:hover .cm-icon{transform:scale(1.2)}
+.cm-item.checked::before{content:"\2713";color:#50e69d;width:12px}
+.cm-sep{height:1px;background:rgba(255,255,255,.08);margin:5px 8px}
+.cm-submenu{position:relative}
+.cm-submenu .cm-sub{
+  display:none;position:absolute;left:100%;top:-5px;z-index:3;
+  border-radius:14px;padding:5px;min-width:170px;max-height:320px;overflow:auto;
+  background:rgba(24,31,46,.95);
+  border:1px solid rgba(170,200,255,.16);
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 14px 40px rgba(0,0,0,.5);
+}
+.cm-submenu:hover .cm-sub,.cm-submenu.open .cm-sub{display:block}
+
+/* modal */
+#modal-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(4,7,13,.66);
+  display:flex;align-items:center;justify-content:center;
+  animation:overFade .2s ease both;
+}
+@keyframes overFade{from{opacity:0}}
+#modal{
+  width:460px;max-width:92vw;max-height:86vh;overflow-x:hidden;overflow-y:auto;
+  scrollbar-width:none;
+  border-radius:22px;padding:20px 22px 18px;
+  background:linear-gradient(145deg,rgba(58,76,112,.76),rgba(16,21,36,.95));
+  border:1px solid var(--line);
+  box-shadow:0 20px 55px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.1),inset 0 0 40px rgba(255,255,255,.03);
+  backdrop-filter:blur(18px) saturate(135%);
+  -webkit-backdrop-filter:blur(18px) saturate(135%);
+}
+#modal::-webkit-scrollbar{width:0;height:0}
+#hist-list{scrollbar-width:none}
+#hist-list::-webkit-scrollbar{width:0;height:0}
+.modal-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:14px}
+.modal-body{color:var(--text);font-size:13px;margin-bottom:6px;line-height:1.55}
+.modal-body input[type="text"],.modal-body input[type="url"]{
+  width:100%;background:rgba(5,9,17,.55);
+  border:1px solid rgba(255,255,255,.12);border-radius:12px;
+  color:var(--text);padding:9px 13px;font-size:13px;outline:none;margin-top:8px;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.modal-body input:focus{border-color:rgba(85,168,255,.55);box-shadow:0 0 0 3px rgba(61,139,255,.1)}
+.modal-body select{
+  width:100%;background:rgba(5,9,17,.55);
+  border:1px solid rgba(255,255,255,.12);border-radius:12px;
+  color:var(--text);padding:9px 12px;font-size:13px;outline:none;margin-top:6px;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+.modal-body select:focus{border-color:rgba(85,168,255,.55);box-shadow:0 0 0 3px rgba(61,139,255,.1)}
+.modal-body .hint{color:#7f8ba2;font-size:12px;margin-top:10px;line-height:1.5}
+.modal-body .row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}
+.hidden{display:none !important}
+
+/* настройки в стиле Telegram: группы и строки */
+.set-group-title{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:#8593ae;margin:16px 4px 6px}
+.set-group-title:first-child{margin-top:2px}
+.set-row{display:flex;align-items:center;gap:14px;padding:11px 4px;border-bottom:1px solid rgba(255,255,255,.055)}
+.set-row:last-child{margin-bottom:8px}
+.set-label{flex:1;min-width:0}
+.set-name{font-size:13px;color:#e9edf7}
+.set-desc{font-size:11.5px;color:#7581ab;margin-top:2px;line-height:1.4}
+.set-ctrl{flex-shrink:0;display:flex;align-items:center;gap:8px}
+.set-ctrl select{width:200px;margin-top:0}
+.set-ctrl input[type="text"]{width:56px;margin-top:0;text-align:center;padding:8px 6px}
+.set-ctrl .range{width:142px}
+.set-ctrl .volume{font-size:12px}
+/* устройства: одна строка-триггер + раскрывающийся список */
+.set-dev-row{padding:12px 4px 2px}
+.set-dev-title{font-size:13px;color:#e9edf7}
+.set-dev-sub{font-size:11.5px;color:#7581ab;margin-top:2px;line-height:1.4}
+.dev-dd{position:relative;padding:6px 4px}
+.dev-dd-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:rgba(10,16,28,.55);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#dfe7f5;cursor:pointer;text-align:left;transition:border-color .15s ease,background .15s ease;font-family:inherit}
+.dev-dd-trigger:hover{border-color:rgba(255,255,255,.28);background:rgba(20,30,52,.5)}
+.dev-dd.open .dev-dd-trigger{border-color:rgba(85,168,255,.5);background:rgba(85,160,255,.14)}
+.dev-chev{flex-shrink:0;font-size:11px;color:#8fa0c2;transition:transform .25s ease}
+.dev-dd.open .dev-chev{transform:rotate(180deg)}
+.dev-dd-body{overflow:hidden;max-height:0;opacity:0;transform:translateY(-4px);transition:max-height .3s ease,opacity .22s ease,transform .25s ease;margin-top:0;display:flex;flex-direction:column;gap:4px}
+.dev-dd.open .dev-dd-body{max-height:240px;opacity:1;transform:translateY(0);overflow-y:auto;margin-top:6px;padding:2px}
+.dev-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:rgba(10,16,28,.55);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#dfe7f5;cursor:pointer;text-align:left;transition:border-color .15s ease,background .15s ease;font-family:inherit}
+.dev-item:hover{border-color:rgba(255,255,255,.28);background:rgba(20,30,52,.5)}
+.dev-item.active{border-color:rgba(85,168,255,.6);background:rgba(85,160,255,.14);color:#cfe4ff}
+.dev-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dev-tag{flex-shrink:0;font-size:10px;letter-spacing:.4px;opacity:.9}
+/* тумблер как в Telegram */
+.switch{position:relative;width:46px;height:28px;flex-shrink:0}
+.switch input{opacity:0;position:absolute;width:0;height:0}
+.switch i{position:absolute;inset:0;border-radius:14px;background:rgba(160,175,205,.22);cursor:pointer;box-shadow:inset 0 1px 2px rgba(0,0,0,.3);transition:background .2s ease}
+.switch i::before{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .22s ease}
+.switch input:checked + i{background:linear-gradient(90deg,#4fa3ff,#4a9cf0)}
+.switch input:checked + i::before{transform:translateX(18px)}
+
+/* toast */
+#toasts{position:fixed;right:16px;bottom:62px;display:flex;flex-direction:column;gap:8px;z-index:500}
+.toast{
+  background:rgba(24,31,46,.94);
+  border:1px solid rgba(85,168,255,.4);
+  color:var(--text);border-radius:14px;padding:11px 16px;
+  font-size:12px;box-shadow:0 12px 30px rgba(0,0,0,.45);
+  animation:toast-in .2s ease;max-width:360px;
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+}
+.toast.error{border-color:rgba(255,110,120,.5)}
+.toast.success{border-color:rgba(80,230,157,.45)}
+
+.key-capture{
+  text-align:center;padding:24px 12px;
+  border:1px dashed var(--blue);border-radius:14px;
+  color:var(--blue);font-size:15px;cursor:pointer;margin-top:8px;
+}
+.key-capture.capturing{background:rgba(85,168,255,.1);color:#fff}
+
+.rec-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff5252;margin-right:8px;animation:recpulse 1s infinite}
+@keyframes recpulse{50%{opacity:.25}}
+.rec-time{font-size:20px;color:#fff;font-weight:600;letter-spacing:1px}
+
+.hist-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:#d9e0ec;font-size:13px}
+.hist-item:hover{background:rgba(85,168,255,.14)}
+.hist-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist-time{color:#7f8ba2;font-size:11px}
+
+@media(max-width:800px){
+  .sidebar{width:190px;min-width:190px}
+  .brand{margin-right:8px}
+  .top-actions .btn:nth-child(2){display:none}
+  .search{width:30vw}
+}
+
+/* ==================== АНИМАЦИИ ==================== */
+
+/* --- фоновое сияние: рисуется один раз в Canvas (renderAurora), дрейфует transform-ом --- */
+/* фоновая фотография — отдельным слоем: body-background с fixed Chromium
+   не отдаёт в backdrop-filter, и панели оставались без блюра */
+#bg-layer{
+  position:absolute;left:0;top:0;width:100vw;height:100vh;
+  z-index:0;pointer-events:none;
+  background-position:center;background-size:cover;background-repeat:no-repeat;
+}
+#aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+/* --- пучки света: 4 круглых светящихся пятна, плавно дрейфуют каждый своим темпом (transform=GPU) --- */
+#aurora i{display:block;position:absolute;border-radius:50%;pointer-events:none;will-change:transform;opacity:.16;
+  background:radial-gradient(circle at 50% 50%,rgba(140,190,255,.5) 0%,rgba(96,158,255,.16) 45%,rgba(96,158,255,0) 70%)}
+#aurora i:nth-child(1){width:44vw;height:44vw;top:8vh;left:6vw;animation:pbeam1 7s ease-in-out infinite alternate}
+#aurora i:nth-child(2){width:50vw;height:50vw;top:38vh;left:48vw;animation:pbeam2 9s ease-in-out infinite alternate}
+#aurora i:nth-child(3){width:38vw;height:38vw;top:52vh;left:14vw;animation:pbeam3 6s ease-in-out infinite alternate}
+#aurora i:nth-child(4){width:46vw;height:46vw;top:-10vh;left:34vw;animation:pbeam4 10s ease-in-out infinite alternate}
+@keyframes pbeam1{to{transform:translate(9vw,22vh) scale(1.25)}}
+@keyframes pbeam2{to{transform:translate(-12vw,-9vh) scale(.85)}}
+@keyframes pbeam3{to{transform:translate(13vw,-13vh) scale(1.3)}}
+@keyframes pbeam4{to{transform:translate(-9vw,16vh) scale(1.15)}}
+#aurora canvas.aurora-bg{animation:aurDrift1 16s ease-in-out infinite alternate,aurDrift2 23s ease-in-out infinite alternate}
+@keyframes aurDrift1{from{transform:translate(-34px,-18px) rotate(-1.4deg) scale(1.03)}to{transform:translate(30px,14px) rotate(1.6deg) scale(1.09)}}
+@keyframes aurDrift2{from{opacity:.86}to{opacity:1}}
+
+/* --- стеклянные кнопки и поля: фейк-стекло без backdrop-filter (на слабом GPU blur даёт артефакты) --- */
+
+/* --- единый микро-слой: наведение и нажатие у всех интерактивных элементов --- */
+.btn,.fbtn,.small-btn,.side-btn,.new-set,.hist-item,.cm-item,.win{
+  transition:transform .12s ease,background .15s ease,color .15s ease,filter .15s ease,box-shadow .2s ease,border-color .18s ease;
+}
+.btn:hover,.fbtn:hover,.small-btn:hover,.side-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.btn:active,.fbtn:active,.small-btn:active,.side-btn:active{transform:scale(.92)}
+.hist-item:active,.cm-item:active{transform:scale(.98)}
+.win:active{transform:scale(.9)}
+.win.close:active{background:#a3313c;color:#fff}
+
+/* --- карточки звуков: каскадный въезд при отрисовке --- */
+.sound{animation:cardIn .55s ease both}
+.grid.no-anim .sound{animation:none}
+@keyframes cardIn{from{opacity:0;translate:0 14px;scale:.95}}
+
+/* --- волны на играющей карточке --- */
+.waves{position:absolute;right:8px;bottom:15px;display:flex;gap:2px;height:14px;align-items:flex-end;opacity:0}
+.sound.playing .waves{opacity:1}
+.waves i{width:3px;border-radius:2px;background:linear-gradient(180deg,#6ec8ff,#3ddc84);animation:waveb .8s ease-in-out infinite}
+.waves i:nth-child(2){animation-delay:.12s}
+.waves i:nth-child(3){animation-delay:.24s}
+.waves i:nth-child(4){animation-delay:.36s}
+@keyframes waveb{0%,100%{height:4px}50%{height:14px}}
+
+/* --- блик на обложке при наведении --- */
+.sound-cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.16) 50%,transparent 58%);transform:translateX(-130%);transition:transform .75s ease}
+.sound:hover .sound-cover::after{transform:translateX(130%)}
+
+/* --- панель «сейчас играет» --- */
+.nowbar{transition:border-color .5s ease,box-shadow .5s ease,background .5s ease}
+.nowbar.playing{border-color:rgba(85,168,255,.38);box-shadow:0 0 20px rgba(85,168,255,.12)}
+.now-eq{display:none;gap:2px;align-items:flex-end;height:12px;margin-right:9px}
+.nowbar.playing .now-eq{display:inline-flex}
+.now-eq i{width:3px;border-radius:2px;background:linear-gradient(180deg,#6ec8ff,#3ddc84);animation:waveb .9s ease-in-out infinite}
+.now-eq i:nth-child(2){animation-delay:.15s}
+.now-eq i:nth-child(3){animation-delay:.3s}
+
+/* --- стартовый въезд панелей --- */
+/* анимация на .main оставляла у контейнера активный слой и ломала
+   backdrop-filter у сайдбара, поэтому въезжает только контент */
+.content{animation:contentIn .5s ease both}
+@keyframes contentIn{from{opacity:0;transform:translateY(10px)}}
+.footer{animation:footIn .5s .12s ease both}
+@keyframes footIn{from{opacity:0}}
+.nowbar{animation:nbIn .45s .05s ease both}
+@keyframes nbIn{from{opacity:0}}
+
+/* --- шапка: элементы влетают по очереди --- */
+.header>*{animation:hdrIn .45s ease both}
+.header>*:nth-child(2){animation-delay:.05s}
+.header>*:nth-child(3){animation-delay:.1s}
+.header>*:nth-child(4){animation-delay:.15s}
+@keyframes hdrIn{from{opacity:0;transform:translateY(-6px)}}
+
+/* --- сайдбар: анимация только у выбранного (нажатого) набора --- */
+.set.active{animation:setPop .3s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes setPop{from{opacity:0;transform:scale(.96)}}
+@keyframes itemIn{from{opacity:0;transform:translateX(10px)}}
+
+/* --- история: стаггер --- */
+#hist-list .hist-item{animation:itemIn .2s ease both;animation-delay:calc(var(--si,0)*16ms)}
+
+/* --- модалка: открытие --- */
+#modal{animation:modalIn .3s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes modalIn{from{opacity:0;transform:scale(.88) translateY(16px)}}
+#modal .modal-title,#modal .modal-body,#modal .modal-actions{animation:modalItemIn .25s ease both}
+#modal .modal-body{animation-delay:.06s}
+#modal .modal-actions{animation-delay:.12s}
+@keyframes modalItemIn{from{opacity:0;transform:translateY(6px)}}
+
+/* --- модалка: закрытие --- */
+#modal-overlay.closing{animation:overOut .18s ease both}
+#modal-overlay.closing #modal{animation:modalOut .18s ease both}
+@keyframes overOut{to{opacity:0}}
+@keyframes modalOut{to{opacity:0;transform:scale(.94) translateY(14px)}}
+
+/* --- контекстное меню: открытие, пункты, закрытие --- */
+#context-menu{animation:cmIn .18s ease both}
+@keyframes cmIn{from{opacity:0;transform:scale(.94)}}
+#context-menu .cm-item{animation:cmItem .18s ease both;animation-delay:calc(var(--i,0)*14ms)}
+@keyframes cmItem{from{opacity:0;transform:translateY(4px) scale(.97)}}
+#context-menu.closing{animation:cmOut .15s ease both}
+@keyframes cmOut{to{opacity:0;transform:scale(.95) translateY(4px)}}
+
+/* --- окно: схлопывание при сворачивании/закрытии --- */
+body.win-closing{animation:winOut .2s ease both;pointer-events:none}
+@keyframes winOut{to{opacity:0;transform:scale(.95)}}
+
+/* --- тосты: вход с пружинкой, подсветка, выход --- */
+.toast{animation:toast-in .26s cubic-bezier(.2,.9,.3,1.15);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+@keyframes toast-in{from{transform:translateY(12px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+.toast:hover{transform:translateY(-2px) scale(1.03);border-color:rgba(120,190,255,.7)}
+.toast.out{animation:toast-out .23s ease both}
+@keyframes toast-out{to{opacity:0;transform:translateY(10px) scale(.95)}}
+
+/* --- бейджи на карточках: пружинка --- */
+.sound .badge{animation:badgePop .3s cubic-bezier(.2,.9,.3,1.35) both}
+@keyframes badgePop{from{opacity:0;transform:scale(.5)}}
+
+/* --- поле захвата клавиши: пульсация --- */
+.key-capture{transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease}
+.key-capture:not(.capturing):hover{background:rgba(85,168,255,.06);box-shadow:0 0 18px rgba(85,168,255,.18)}
+.key-capture.capturing{animation:kcPulse 1.3s ease-in-out infinite}
+@keyframes kcPulse{50%{box-shadow:0 0 22px rgba(85,168,255,.4)}}
+
+/* --- слайдер громкости: ползунок растёт на наведении --- */
+.range::-webkit-slider-thumb{transition:transform .15s ease,box-shadow .15s ease}
+.range:hover::-webkit-slider-thumb,.range:active::-webkit-slider-thumb{transform:scale(1.35);box-shadow:0 0 12px rgba(78,168,255,.7)}
+
+/* --- скроллбары подсвечиваются --- */
+::-webkit-scrollbar-thumb{transition:background .2s ease}
+::-webkit-scrollbar-thumb:hover{background:rgba(150,190,235,.35)}
+
+/* --- иконка в кнопке шевелится на наведении --- */
+.btn:hover .icon{animation:iconNudge .35s ease}
+@keyframes iconNudge{0%,100%{transform:none}40%{transform:translateX(2px)}}
+
+/* --- кнопки управления окном --- */
+.win{transition:background .15s ease,color .15s ease,transform .1s ease}
+.win.close:hover{background:#c43b48;color:#fff}
+
+/* --- логотип: круглый, без анимации --- */
+.logo{transition:transform .4s ease}
+
+/* --- смена названия «сейчас играет» --- */
+#current{display:inline-block;transition:opacity .25s ease}
+#current.cur-fade{animation:curFade .3s ease}
+@keyframes curFade{from{opacity:0;transform:translateY(4px)}}
+
+/* --- прогрес-бар: подсветка и плавный рост --- */
+.progress i{box-shadow:0 0 8px rgba(80,168,255,.55);transition:width .15s ease}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* ==================== РЕДИЗАЙН v2 ====================
+   Всё ниже переопределяет старые правила (каскад), старые блоки не удалены,
+   чтобы можно было откатиться. Логика: те же классы, но чище стекло,
+   нормальные иконки и собранный по группам футер. */
+
+/* ---- иконки ---- */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.ic{
+  width:15px;height:15px;flex:0 0 auto;display:block;pointer-events:none;
+  fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* ---- шапка ---- */
+.btn{display:inline-flex;align-items:center;gap:7px}
+.btn .ic{width:14px;height:14px;opacity:.9}
+.search-wrap{position:relative;display:flex;align-items:center;margin-left:12px}
+.search-ic{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;color:#7c89a3;pointer-events:none;
+}
+.search{margin-left:0;padding-left:35px;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease,width .25s ease}
+.search:focus{width:min(480px,40vw)}
+
+/* ---- панель «сейчас играет» ---- */
+.now-actions{gap:4px}
+.small-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:28px;padding:0 10px;border-radius:14px;
+  background:rgba(80,92,116,.32);border:1px solid rgba(255,255,255,.09);
+  color:#ccd6e6;font-size:12px;
+}
+.small-btn .ic{width:14px;height:14px}
+.small-btn.icon-only{width:28px;padding:0;justify-content:center}
+.small-btn:hover{background:rgba(105,125,160,.42);color:#fff}
+
+.nsep{width:1px;height:15px;background:rgba(255,255,255,.09);margin:0 3px;flex:0 0 auto}
+
+.small-btn.play{
+  padding:0 13px;gap:7px;
+  background:rgba(85,168,255,.15);border-color:rgba(85,168,255,.38);color:#d5e8ff;
+}
+.small-btn.play:hover{background:rgba(85,168,255,.24);color:#fff}
+.small-btn.play .ic-play,.small-btn.play .lbl-play{display:block}
+.small-btn.play .ic-pause,.small-btn.play .lbl-pause{display:none}
+.small-btn.play.is-playing .ic-play,.small-btn.play.is-playing .lbl-play{display:none}
+.small-btn.play.is-playing .ic-pause,.small-btn.play.is-playing .lbl-pause{display:block}
+.small-btn.active{background:rgba(85,168,255,.24);border-color:rgba(85,168,255,.55);color:#a9d3ff}
+
+/* ---- футер: группы вместо свалки ---- */
+.footer{
+  height:48px;padding:0 12px;gap:9px;
+  background:linear-gradient(180deg,rgba(22,31,50,.94),rgba(11,16,27,.96));
+  border:1px solid rgba(148,178,230,.15);
+  box-shadow:0 10px 32px rgba(0,0,0,.42);
+}
+.fgroup{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.fdiv{width:1px;height:19px;background:rgba(255,255,255,.08);flex:0 0 auto;margin:0 2px}
+.fbtn{
+  display:inline-flex;align-items:center;gap:7px;
+  height:30px;padding:0 11px;border-radius:15px;
+  background:rgba(70,82,105,.34);border:1px solid rgba(255,255,255,.08);
+  color:#c7d1e2;font-size:12.5px;white-space:nowrap;
+}
+.fbtn .ic{width:15px;height:15px}
+.fbtn:hover{background:rgba(96,113,145,.44);color:#fff}
+.fbtn.icon-only{width:30px;padding:0;justify-content:center;color:#a9b6cb}
+.fbtn.green{color:#5fe3a8;border-color:rgba(70,230,157,.22)}
+.fbtn.green.active{background:rgba(70,230,157,.16);border-color:rgba(70,230,157,.45);color:#82f0c0}
+.fbtn.active{background:rgba(85,168,255,.2);border-color:rgba(85,168,255,.5);color:#b7d9ff}
+.fbtn.muted{color:#93a0b7}
+.fbtn.danger{
+  background:rgba(226,64,78,.14);border-color:rgba(226,64,78,.4);color:#ffa9b1;
+  padding:0 13px;
+}
+.fbtn.danger:hover{background:rgba(226,64,78,.24);border-color:rgba(240,90,104,.6);color:#fff}
+.fbtn.danger .ic{width:13px;height:13px}
+
+.vol{display:inline-flex;align-items:center;gap:7px;color:#9fadc4;font-size:11px}
+.vol .ic{width:14px;height:14px;color:#8b9cb9}
+.vol:hover .ic{color:#b9c9e4}
+.range{width:70px;height:4px;background:#4a5568}
+.volume{min-width:29px;text-align:right;font-variant-numeric:tabular-nums;color:#93a2bb}
+#v-master{color:#cfe4ff}
+.footer-right{font-size:11px;color:#8592a8}
+
+/* ---- карточки ---- */
+.grid{padding:16px 6px;gap:13px}
+.sound{
+  border-radius:15px;padding:7px 7px 6px;
+  background:linear-gradient(150deg,rgba(52,72,112,.5),rgba(19,24,36,.8));
+  border:1px solid rgba(160,190,240,.16);
+  box-shadow:inset 0 1px rgba(255,255,255,.09),0 6px 16px rgba(0,0,0,.18);
+}
+.sound:hover{
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-3px) scale(1.015);
+  border-color:color-mix(in srgb,var(--glow,rgba(111,174,255,.5)) 62%,transparent);
+  box-shadow:0 12px 26px color-mix(in srgb,var(--glow,rgba(44,121,220,.3)) 55%,rgba(0,0,0,.4));
+}
+.sound-cover{border-radius:10px}
+.sound-name{font-size:12px;line-height:15.5px;color:#e4e9f3}
+.sound.playing{background:linear-gradient(150deg,rgba(58,104,164,.6),rgba(24,30,46,.85))}
+.sound.stopped{outline:1px solid rgba(255,120,120,.28)}
+
+/* ---- мелочи ---- */
+.side-btn,.btn,.new-set{gap:7px}
+.side-btn{display:inline-flex;align-items:center;justify-content:center;font-size:12.5px}
+.side-btn .ic{width:14px;height:14px;opacity:.85}
+.new-set{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.new-set .ic{width:13px;height:13px}
+.section-title{color:#7f8da8}
+
+/* ==================== РЕДИЗАЙН v2.1: доводка ==================== */
+
+/* ---- шапка: настройки уходят вправо, бренд чётче ---- */
+.top-actions{margin-left:auto}
+.brand{
+  color:#c2e0ff;opacity:.96;
+  text-shadow:0 0 14px rgba(120,190,255,.35),0 2px 4px rgba(0,0,0,.55);
+}
+.btn .ic{opacity:1}
+.win{color:#d6dbe6}
+
+/* ---- плеер: перемотка тянется, шкала своя ---- */
+.now-label{flex:0 1 auto;max-width:340px}
+.now-seek{flex:1 1 auto;width:auto;max-width:520px;margin-left:14px}
+.now-time{min-width:78px}
+.now-seek,
+.vol .range{
+  appearance:none;-webkit-appearance:none;
+  height:4px;border-radius:4px;outline:none;cursor:pointer;
+  background:linear-gradient(90deg,#4ea8ff 0 var(--p,0%),rgba(146,164,194,.28) var(--p,0%) 100%);
+}
+.now-seek{height:5px}
+.now-seek::-webkit-slider-thumb,
+.vol .range::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;
+  width:12px;height:12px;border-radius:50%;
+  background:#eaf4ff;border:2px solid #3f97f0;
+  box-shadow:0 0 8px rgba(78,168,255,.55);
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.now-seek:hover::-webkit-slider-thumb,
+.vol .range:hover::-webkit-slider-thumb{transform:scale(1.12);box-shadow:0 0 12px rgba(78,168,255,.8)}
+.vol .range{width:84px}
+
+/* ---- футер: середина растягивается, воздух распределён ---- */
+.footer{justify-content:flex-start}
+.footer .fgroup.vols{flex:1;justify-content:center;gap:22px;min-width:0}
+.footer-right{margin-left:16px;margin-right:6px}
+.fbtn.icon-only .ic{width:16px;height:16px}
+.fbtn.icon-only{color:#b6c4da}
+.fbtn.icon-only:hover{color:#fff}
+.fbtn.danger .ic{width:12px;height:12px}
+.fbtn.danger{font-weight:600;letter-spacing:.2px}
+body.no-play #eq-bars{display:none}
+
+/* ---- сайдбар: активный набор видно, низ легче ---- */
+.set .set-name{font-size:12.5px}
+.set.active{
+  background:linear-gradient(90deg,rgba(85,168,255,.2),rgba(85,168,255,.05));
+  color:#e2efff;
+  box-shadow:inset 0 0 0 1px rgba(85,168,255,.16);
+}
+.set.active::before{
+  left:3px;top:11px;bottom:11px;width:3px;
+  background:linear-gradient(180deg,#6ec8ff,#3ddc84);
+  box-shadow:0 0 8px rgba(110,200,255,.55);
+}
+.set.active .count{background:rgba(85,168,255,.24);color:#dcecff}
+.sidebar-bottom #btn-open-recordings,
+.sidebar-bottom #btn-open-downloads{
+  height:28px;background:transparent;border-color:transparent;
+  color:#8b99b2;justify-content:flex-start;padding-left:12px;font-size:12px;
+}
+.sidebar-bottom #btn-open-recordings:hover,
+.sidebar-bottom #btn-open-downloads:hover{background:rgba(255,255,255,.05);color:#cfdaea}
+
+/* ---- карточки: подпись чуть крупнее ---- */
+.sound-name{font-size:12.5px;line-height:16px}
+
+/* ==================== РЕДИЗАЙН v2.2: модалки ==================== */
+#modal{
+  display:flex;flex-direction:column;
+  max-height:min(86vh,760px);
+  overflow:hidden;
+  padding:20px 22px 16px;
+  background:linear-gradient(180deg,#1a2438 0%,#141c2c 45%,#0f1622 100%);
+  border:1px solid rgba(154,184,235,.18);
+  box-shadow:0 30px 70px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.06);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+#modal-overlay{background:rgba(3,6,12,.7)}
+.modal-title{
+  flex:0 0 auto;font-size:16px;letter-spacing:.2px;
+  padding-bottom:14px;margin-bottom:2px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.modal-body{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  margin-bottom:0;padding-right:6px;margin-right:-6px;
+}
+.modal-body::-webkit-scrollbar{width:6px}
+.modal-body::-webkit-scrollbar-thumb{background:rgba(150,170,205,.25);border-radius:6px}
+.modal-actions{
+  flex:0 0 auto;margin-top:0;padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.modal-actions .small-btn{height:32px;border-radius:16px;padding:0 16px}
+#modal .small-btn{background:rgba(103,119,145,.35)}
+#modal .small-btn:hover{background:rgba(120,140,175,.45)}
+
+/* группы настроек */
+.set-group-title{
+  font-size:10.5px;letter-spacing:1.4px;color:#7d8ba6;
+  margin:20px 2px 4px;
+}
+.set-group-title:first-child{margin-top:8px}
+.set-row{align-items:flex-start;padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.055)}
+.set-row:last-child{border-bottom:0}
+.set-name{font-size:13px;font-weight:500;color:#e8edf7}
+.set-desc{font-size:11.5px;color:#7e8aa3;margin-top:3px}
+.set-dev-row{padding:12px 2px 2px}
+.dev-dd{padding:6px 2px}
+.dev-dd-trigger{background:rgba(8,13,23,.55);border-radius:11px;padding:10px 12px}
+.dev-dd.open .dev-dd-trigger{background:rgba(85,160,255,.1)}
+
+/* тумблеры компактнее */
+.switch{width:42px;height:24px}
+.switch i{border-radius:12px}
+.switch i::before{width:18px;height:18px;top:3px;left:3px}
+.switch input:checked + i::before{transform:translateX(18px)}
+
+/* предупреждение о микрофоне */
+#mic-warn{display:flex;gap:7px;align-items:flex-start;line-height:1.45;padding-top:8px !important}
+#mic-warn::before{font-weight:700;flex:0 0 auto}
+#mic-warn.ok{color:#7fe0b0}
+#mic-warn.ok::before{content:'✓'}
+#mic-warn.warn{color:#f0a26a}
+#mic-warn.warn::before{content:'!'}
+
+/* внутри модалки ползунки и кнопки */
+#modal .set-ctrl .range{width:150px}
+#modal .volume{color:#8b99b2}
+#modal .hint{
+  margin-top:18px;padding:11px 12px;border-radius:12px;
+  background:rgba(85,168,255,.06);border:1px solid rgba(85,168,255,.14);
+  font-size:11.5px;color:#8d9cb6;line-height:1.5;
+}
+#modal .hint b{color:#bcd2ee;font-weight:600}
+
+/* ---- шеврон в выпадающем списке устройств ---- */
+.dev-chev{display:flex;align-items:center;justify-content:center;width:14px;height:14px}
+.dev-chev .ic{width:13px;height:13px}
+.small-btn .ic{width:13px;height:13px}
+
+/* ---- индикатор «играет» на карточке: аккуратный чип в углу ---- */
+.sound.playing .waves{
+  left:8px;right:auto;top:8px;bottom:auto;
+  height:16px;padding:3px 5px;gap:2.5px;
+  border-radius:7px;background:rgba(5,9,16,.62);
+  box-shadow:inset 0 0 0 1px rgba(150,200,255,.22),0 2px 6px rgba(0,0,0,.35);
+}
+.sound.playing .waves i{width:2.5px;border-radius:1.5px}
+.sound.playing{
+  box-shadow:inset 0 1px rgba(255,255,255,.09),inset 0 0 0 1px rgba(85,168,255,.3),0 8px 22px rgba(30,95,190,.22);
+}
+.sound.stopped .waves{display:none}
+
+/* ==================== РЕДИЗАЙН v2.3: стекло, воздух, обрезка ==================== */
+
+/* ---- настоящее стекло: полупрозрачный фон + blur ---- */
+.glass{
+  background:linear-gradient(180deg,rgba(30,42,68,.52),rgba(12,18,31,.62));
+  backdrop-filter:blur(26px) saturate(155%);
+  -webkit-backdrop-filter:blur(26px) saturate(155%);
+  border:1px solid rgba(160,190,240,.16);
+  box-shadow:0 16px 40px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.07);
+}
+.header.glass{background:linear-gradient(180deg,rgba(32,45,72,.5),rgba(13,19,33,.6))}
+.sidebar.glass{background:linear-gradient(180deg,rgba(28,39,62,.5),rgba(11,16,28,.62))}
+.nowbar{
+  background:linear-gradient(180deg,rgba(52,72,112,.4),rgba(20,28,46,.55));
+  backdrop-filter:blur(20px) saturate(150%);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);
+  border-color:rgba(160,190,240,.16);
+}
+.footer{
+  background:linear-gradient(180deg,rgba(26,38,62,.62),rgba(10,15,26,.74));
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+}
+#modal{
+  background:linear-gradient(180deg,rgba(27,38,60,.9) 0%,rgba(18,26,41,.92) 55%,rgba(13,19,31,.94) 100%);
+  backdrop-filter:blur(30px) saturate(150%);
+  -webkit-backdrop-filter:blur(30px) saturate(150%);
+}
+#context-menu{
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+}
+.search{
+  background:rgba(6,11,20,.45);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+/* ---- карточки: подписи не липнут к краю, свечение не режется ---- */
+.grid{padding:18px 14px 22px}
+.sound{padding:7px 7px 9px;gap:7px;border-radius:15px}
+.sound-name{line-height:15.5px;min-height:31px;padding-bottom:1px}
+.sound:hover{
+  box-shadow:0 10px 22px color-mix(in srgb,var(--glow,rgba(44,121,220,.28)) 55%,rgba(0,0,0,.35));
+}
+.sound.playing{
+  box-shadow:inset 0 0 0 1px rgba(85,168,255,.32),0 8px 20px rgba(30,95,190,.2);
+}
+
+/* ---- низ сетки мягко уходит, чтобы обрезанный ряд не выглядел поломкой ---- */
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 24px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 calc(100% - 24px),transparent 100%);
+}
+.grid.at-end{-webkit-mask-image:none;mask-image:none}
+
+/* ---- стекло чуть прозрачнее, чтобы blur читался ---- */
+.glass{
+  background:linear-gradient(180deg,rgba(36,51,82,.44),rgba(12,18,31,.56));
+  backdrop-filter:blur(30px) saturate(170%);
+  -webkit-backdrop-filter:blur(30px) saturate(170%);
+  box-shadow:0 18px 44px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.09);
+}
+.header.glass{background:linear-gradient(180deg,rgba(38,53,86,.42),rgba(13,19,33,.54))}
+.sidebar.glass{background:linear-gradient(180deg,rgba(34,47,75,.44),rgba(11,16,28,.56))}
+.nowbar{
+  background:linear-gradient(180deg,rgba(48,67,105,.34),rgba(19,27,45,.46));
+  backdrop-filter:blur(24px) saturate(165%);
+  -webkit-backdrop-filter:blur(24px) saturate(165%);
+}
+.footer{
+  background:linear-gradient(180deg,rgba(24,36,60,.52),rgba(8,13,23,.66));
+  backdrop-filter:blur(32px) saturate(170%);
+  -webkit-backdrop-filter:blur(32px) saturate(170%);
+}
+#modal{
+  background:linear-gradient(180deg,rgba(30,42,66,.82) 0%,rgba(18,26,41,.88) 55%,rgba(12,18,30,.92) 100%);
+  backdrop-filter:blur(34px) saturate(160%);
+  -webkit-backdrop-filter:blur(34px) saturate(160%);
+}
+
+/* ==================== v2.4: свечение больше не режется ==================== */
+/* Скролл-контейнер .grid в любом случае клипует внешние тени, поэтому
+   подсветка карточки нарисована ВНУТРИ (inset) + запас по краям сетки. */
+.grid{padding:20px 24px 28px;gap:13px}
+.sound:hover{
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-2px) scale(1.012);
+  border-color:color-mix(in srgb,var(--glow,rgba(111,174,255,.55)) 70%,#ffffff 6%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb,var(--glow,rgba(111,174,255,.5)) 55%,transparent),
+    inset 0 0 26px color-mix(in srgb,var(--glow,rgba(111,174,255,.4)) 26%,transparent),
+    0 8px 16px rgba(0,0,0,.38);
+}
+.sound.playing{
+  box-shadow:
+    inset 0 0 0 1px rgba(85,168,255,.42),
+    inset 0 0 26px rgba(70,150,255,.2),
+    0 8px 16px rgba(0,0,0,.34);
+}
+.sound.sel{
+  box-shadow:
+    inset 0 0 0 2px rgba(85,168,255,.85),
+    inset 0 0 24px rgba(70,150,255,.22),
+    0 8px 16px rgba(0,0,0,.34);
+}
+/* низ сетки: совсем короткое затухание, чтобы не «резать» карточку */
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 14px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 calc(100% - 14px),transparent 100%);
+}
+
+/* ==================== v2.5: свечение вернул, но с запасом ====================
+   Внешняя тень карточки режется только краем скролл-контейнера .grid,
+   поэтому у сетки увеличены отступы (28/26) — тень влезает целиком. */
+.grid{padding:28px 26px 30px;gap:13px}
+.sound:hover{
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-3px) scale(1.015);
+  border-color:color-mix(in srgb,var(--glow,rgba(111,174,255,.6)) 75%,#fff 5%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--glow,rgba(111,174,255,.55)) 50%,transparent),
+    0 0 24px color-mix(in srgb,var(--glow,rgba(111,174,255,.6)) 60%,transparent),
+    0 10px 22px rgba(0,0,0,.42);
+}
+.sound.playing{
+  border-color:color-mix(in srgb,var(--glow,rgba(85,168,255,.7)) 60%,#fff 4%);
+  box-shadow:
+    0 0 0 1px rgba(85,168,255,.4),
+    0 0 26px color-mix(in srgb,var(--glow,rgba(85,168,255,.6)) 55%,transparent),
+    0 10px 22px rgba(0,0,0,.4);
+}
+.sound.sel{
+  box-shadow:
+    0 0 0 2px rgba(85,168,255,.85),
+    0 0 24px rgba(85,168,255,.45),
+    0 10px 22px rgba(0,0,0,.4);
+}
+/* низ сетки — мягкая кромка, чтобы обрезанный ряд не выглядел поломкой */
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 10px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 calc(100% - 10px),transparent 100%);
+}
+
+/* ==================== v2.6: свечение гарантированно без обрезки ====================
+   Радиус свечения (18px) меньше отступа сетки (28px), поэтому крайние
+   карточки светятся так же, как средние — клипать нечему. */
+.grid{padding:28px 28px 30px;gap:13px}
+.sound:hover{
+  border-color:color-mix(in srgb,var(--glow,rgba(111,174,255,.6)) 78%,#fff 6%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--glow,rgba(111,174,255,.55)) 55%,transparent),
+    0 0 18px color-mix(in srgb,var(--glow,rgba(111,174,255,.65)) 70%,transparent),
+    0 0 6px color-mix(in srgb,var(--glow,rgba(111,174,255,.7)) 80%,transparent),
+    0 8px 18px rgba(0,0,0,.42);
+}
+.sound.playing{
+  box-shadow:
+    0 0 0 1px rgba(85,168,255,.42),
+    0 0 18px color-mix(in srgb,var(--glow,rgba(85,168,255,.7)) 60%,transparent),
+    0 8px 18px rgba(0,0,0,.4);
+}
+.sound.sel{
+  box-shadow:
+    0 0 0 2px rgba(85,168,255,.85),
+    0 0 18px rgba(85,168,255,.5),
+    0 8px 18px rgba(0,0,0,.4);
+}
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 8px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 calc(100% - 8px),transparent 100%);
+}
+
+/* ==================== v2.7: явное матовое стекло ==================== */
+.glass{
+  background:linear-gradient(180deg,rgba(44,61,96,.30),rgba(9,15,27,.44));
+  backdrop-filter:blur(40px) saturate(185%);
+  -webkit-backdrop-filter:blur(40px) saturate(185%);
+  box-shadow:0 18px 44px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.11),inset 0 -18px 40px rgba(10,20,40,.18);
+}
+.header.glass{background:linear-gradient(180deg,rgba(46,64,100,.28),rgba(11,18,32,.42))}
+.sidebar.glass{background:linear-gradient(180deg,rgba(40,55,88,.30),rgba(9,14,26,.44))}
+.nowbar{
+  background:linear-gradient(180deg,rgba(54,74,116,.26),rgba(18,26,44,.38));
+  backdrop-filter:blur(32px) saturate(175%);
+  -webkit-backdrop-filter:blur(32px) saturate(175%);
+}
+.footer{
+  background:linear-gradient(180deg,rgba(26,39,64,.44),rgba(7,12,22,.56));
+  backdrop-filter:blur(40px) saturate(180%);
+  -webkit-backdrop-filter:blur(40px) saturate(180%);
+}
+.search{
+  background:rgba(6,11,20,.35);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+}
+#modal{
+  background:linear-gradient(180deg,rgba(32,45,70,.72) 0%,rgba(17,25,40,.82) 55%,rgba(10,16,28,.88) 100%);
+  backdrop-filter:blur(44px) saturate(170%);
+  -webkit-backdrop-filter:blur(44px) saturate(170%);
+}
+#context-menu{
+  backdrop-filter:blur(30px) saturate(170%);
+  -webkit-backdrop-filter:blur(30px) saturate(170%);
+}
+
+/* модалка: чуть плотнее, чтобы карточки за ней не читались */
+#modal{
+  background:linear-gradient(180deg,rgba(34,48,74,.82) 0%,rgba(19,28,45,.88) 55%,rgba(11,18,31,.92) 100%);
+}
+
+/* ==================== v2.8: блюр читается ==================== */
+/* фон-аурора чуть ярче — иначе за панелями нечего размывать */
+#aurora i{opacity:.26}
+#aurora i:nth-child(1){left:2vw;top:2vh}
+#aurora i:nth-child(3){left:8vw;top:60vh}
+
+/* панели: заметно прозрачные + сильный blur */
+.glass{
+  background:linear-gradient(180deg,rgba(52,72,112,.26),rgba(9,15,27,.36));
+  backdrop-filter:blur(46px) saturate(190%);
+  -webkit-backdrop-filter:blur(46px) saturate(190%);
+  border-color:rgba(168,198,245,.20);
+  box-shadow:
+    0 18px 44px rgba(0,0,0,.34),
+    inset 0 1px rgba(255,255,255,.13),
+    inset 0 24px 40px -24px rgba(150,190,255,.16);
+}
+.header.glass{background:linear-gradient(180deg,rgba(56,76,118,.24),rgba(10,17,30,.34))}
+.sidebar.glass{background:linear-gradient(180deg,rgba(48,66,104,.26),rgba(8,13,24,.36))}
+.nowbar{
+  background:linear-gradient(180deg,rgba(62,84,130,.22),rgba(17,25,42,.34));
+  backdrop-filter:blur(36px) saturate(180%);
+  -webkit-backdrop-filter:blur(36px) saturate(180%);
+}
+.footer{
+  background:linear-gradient(180deg,rgba(30,45,74,.40),rgba(6,11,20,.52));
+  backdrop-filter:blur(46px) saturate(185%);
+  -webkit-backdrop-filter:blur(46px) saturate(185%);
+  border-color:rgba(168,198,245,.2);
+  box-shadow:0 18px 44px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.12);
+}
+
+/* ==================== v2.9: карточки уходят под стеклянный футер ====================
+   Сетка теперь доходит до низа окна, а футер лежит поверх неё: при скролле
+   карточки затемняются и размываются под матовым стеклом — блюр видно. */
+.main{height:calc(100vh - 145px)}
+.content{overflow:visible}
+.grid{padding-bottom:74px}
+
+/* сайдбар: низ не заезжает под футер */
+.sidebar{padding-bottom:64px}
+.sidebar{padding-bottom:30px}
+
+/* ==================== v3.0: правки по замечаниям ==================== */
+
+/* 1. сайдбар снова заканчивается над футером, длиннее не стал */
+.main{padding-bottom:37px}
+.content{margin-bottom:-37px}
+.sidebar{padding-bottom:14px}
+
+/* 2. футер: блюр мягче, стекло плотнее — карточки не мешают читать кнопки */
+.footer{
+  background:linear-gradient(180deg,rgba(27,38,60,.72),rgba(8,13,23,.8));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-color:rgba(160,190,235,.16);
+}
+
+/* 3. бар «сейчас играет» и кнопки управления — тоже стекло */
+.nowbar{
+  background:linear-gradient(180deg,rgba(44,60,94,.42),rgba(16,23,39,.55));
+  backdrop-filter:blur(18px) saturate(145%);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  border-color:rgba(160,190,235,.15);
+}
+.small-btn{
+  background:rgba(70,86,116,.38);
+  border-color:rgba(255,255,255,.09);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.small-btn.play{
+  background:rgba(72,140,225,.22);
+  border-color:rgba(120,180,255,.45);
+}
+.small-btn.active{
+  background:rgba(85,168,255,.24);
+  border-color:rgba(120,185,255,.6);
+}
+
+/* 4. верхняя шапка: убираем синеву, нейтральное стекло */
+.header.glass{
+  background:linear-gradient(180deg,rgba(40,48,66,.38),rgba(12,16,26,.46));
+  border-color:rgba(160,185,220,.16);
+}
+.glass{
+  background:linear-gradient(180deg,rgba(38,47,65,.4),rgba(10,15,25,.5));
+}
+.sidebar.glass{
+  background:linear-gradient(180deg,rgba(34,43,60,.4),rgba(9,13,22,.5));
+}
+
+/* шапка: нейтральный графит вместо синевы */
+.header.glass{
+  background:linear-gradient(180deg,rgba(27,33,44,.7),rgba(9,12,19,.76));
+  border-color:rgba(160,180,210,.15);
+  box-shadow:0 18px 44px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.08);
+}
+
+/* ==================== v3.1: блюр везде ==================== */
+
+/* 1. карточки скроллятся ПОД баром «сейчас играет» */
+.content{position:relative}
+.nowbar{position:absolute;top:0;left:0;right:0;z-index:6}
+.grid{padding-top:71px}
+
+/* 2. подложка модалок размывает приложение целиком */
+#modal-overlay{
+  background:rgba(3,6,12,.52);
+  backdrop-filter:blur(14px) saturate(130%);
+  -webkit-backdrop-filter:blur(14px) saturate(130%);
+}
+
+/* 3. контекстное меню — прозрачнее, блюр заметнее */
+#context-menu{
+  background:rgba(20,28,44,.7);
+  backdrop-filter:blur(26px) saturate(160%);
+  -webkit-backdrop-filter:blur(26px) saturate(160%);
+  border-color:rgba(170,200,240,.2);
+  box-shadow:0 18px 44px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.08);
+}
+
+/* 4. тосты — тоже стекло */
+.toast{
+  background:rgba(22,30,46,.72);
+  backdrop-filter:blur(22px) saturate(155%);
+  -webkit-backdrop-filter:blur(22px) saturate(155%);
+  box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.06);
+}
+
+/* 5. выпадающий список устройств в настройках */
+.dev-dd-body .dev-item,
+.dev-dd-trigger{
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+/* бар «сейчас играет»: плотнее, чтобы карточки под ним не мешали тексту */
+.nowbar{
+  background:linear-gradient(180deg,rgba(34,47,73,.78),rgba(12,18,31,.86));
+  box-shadow:0 10px 26px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.07);
+}
+
+/* сетка: карточки плавно растворяются, уходя под бар «сейчас играет» */
+.grid{
+  padding-top:78px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,transparent 43px,#000 78px,#000 calc(100% - 8px),transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0,transparent 43px,#000 78px,#000 calc(100% - 8px),transparent 100%);
+}
+.grid.at-end{
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,transparent 43px,#000 78px,#000 100%);
+  mask-image:linear-gradient(180deg,transparent 0,transparent 43px,#000 78px,#000 100%);
+}
+
+/* ==================== v3.2: блюр под «сейчас играет» и в окнах ==================== */
+
+/* 1. сетка: сверху НЕ прозрачная — карточки реально уезжают под стекло
+      (раньше mask гасил их до бара, и размывать было нечего) */
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 43px,rgba(0,0,0,.55) 56px,#000 70px,#000 calc(100% - 8px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0,#000 43px,rgba(0,0,0,.55) 56px,#000 70px,#000 calc(100% - 8px),transparent 100%);
+}
+.grid.at-end{
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 43px,rgba(0,0,0,.55) 56px,#000 70px,#000 100%);
+  mask-image:linear-gradient(180deg,#000 0,#000 43px,rgba(0,0,0,.55) 56px,#000 70px,#000 100%);
+}
+
+/* 2. бар «сейчас играет»: прозрачнее + сильнее blur, чтобы карточки читались сквозь */
+.nowbar{
+  background:linear-gradient(180deg,rgba(40,55,86,.52),rgba(11,17,30,.66));
+  backdrop-filter:blur(26px) saturate(170%);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);
+  box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.09);
+}
+
+/* 3. настройки: сама карточка тоже стеклянная, а не глухая */
+#modal{
+  background:linear-gradient(180deg,rgba(44,60,92,.58) 0%,rgba(20,29,46,.70) 55%,rgba(11,17,29,.78) 100%);
+  backdrop-filter:blur(34px) saturate(165%);
+  -webkit-backdrop-filter:blur(34px) saturate(165%);
+  border-color:rgba(165,195,240,.22);
+  box-shadow:0 26px 70px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.12);
+}
+
+/* 4. контекстное меню: заметно прозрачнее */
+#context-menu{
+  background:rgba(24,33,50,.52);
+  backdrop-filter:blur(30px) saturate(170%);
+  -webkit-backdrop-filter:blur(30px) saturate(170%);
+}
+
+/* 5. выпадающий список устройств: стекло */
+.dev-dd-body{
+  background:rgba(20,28,44,.82);
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+}
+
+/* сетка: верх НЕ трогаем — бар сам размывает уезжающие под него карточки */
+.grid{
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 8px),transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 8px),transparent 100%);
+}
+.grid.at-end{-webkit-mask-image:none;mask-image:none}
+
+/* ==================== v3.4: «сейчас играет» = стекло как у нижнего бара + выключатель блюра ==================== */
+
+/* тот же материал, что у футера: плотное тёмное стекло */
+.nowbar{
+  background:linear-gradient(180deg,rgba(27,38,60,.72),rgba(8,13,23,.80));
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+  border-color:rgba(160,190,235,.16);
+  box-shadow:0 10px 26px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.08);
+}
+
+/* кнопка блюра в шапке */
+.header .icon-btn{
+  width:34px;padding:0;display:grid;place-items:center;border-radius:50%;
+}
+.header .icon-btn .ic{margin:0}
+.header .icon-btn.off{color:#8b97ad}
+.header .icon-btn.off .ic{opacity:.45}
+
+/* ---- режим без блюра: blur выключается везде, панели становятся плотными ---- */
+body.no-blur .glass,
+body.no-blur .nowbar,
+body.no-blur .footer,
+body.no-blur #modal,
+body.no-blur #context-menu,
+body.no-blur .toast,
+body.no-blur #modal-overlay,
+body.no-blur .search,
+body.no-blur .small-btn,
+body.no-blur .dev-dd-body,
+body.no-blur .dev-dd-trigger,
+body.no-blur .dev-item{
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+body.no-blur .glass{
+  background:linear-gradient(180deg,rgba(30,38,54,.97),rgba(10,14,23,.985));
+}
+body.no-blur .header.glass{
+  background:linear-gradient(180deg,rgba(25,31,43,.98),rgba(8,11,18,.99));
+}
+body.no-blur .sidebar.glass{
+  background:linear-gradient(180deg,rgba(27,35,49,.97),rgba(9,13,21,.985));
+}
+body.no-blur .nowbar{
+  background:linear-gradient(180deg,rgba(24,34,53,.985),rgba(7,11,19,.99));
+}
+body.no-blur .footer{
+  background:linear-gradient(180deg,rgba(23,33,52,.985),rgba(6,10,17,.99));
+}
+body.no-blur #modal{
+  background:linear-gradient(180deg,#1a2437 0%,#111a2a 55%,#0b1220 100%);
+}
+body.no-blur #context-menu{
+  background:rgba(20,27,41,.985);
+}
+body.no-blur #modal-overlay{
+  background:rgba(3,6,12,.82);
+}
+body.no-blur .toast{
+  background:rgba(20,28,42,.985);
+}
+body.no-blur .search{
+  background:rgba(6,11,20,.75);
+}
+body.no-blur .dev-dd-body{
+  background:rgba(17,24,38,.985);
+}
+
+/* ==================== v3.5: верхний бар — сильнее блюр ==================== */
+.nowbar{
+  background:linear-gradient(180deg,rgba(30,43,66,.88),rgba(8,13,23,.93));
+  backdrop-filter:blur(46px) saturate(165%);
+  -webkit-backdrop-filter:blur(46px) saturate(165%);
+  border-color:rgba(160,190,235,.18);
+  box-shadow:0 12px 30px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.07);
+}
+
+/* ==================== v3.6: верхний бар = 1-в-1 нижний ====================
+   У футера класс .glass, и его фон перебивает .footer — реально он
+   rgba(38,47,65,.40) -> rgba(10,15,25,.50) с blur(18px). Теперь у
+   «Сейчас играет» ровно эти же значения, поэтому и стекло такое же. */
+.nowbar{
+  background:linear-gradient(180deg,rgba(38,47,65,.40),rgba(10,15,25,.50));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-color:rgba(160,190,235,.16);
+  box-shadow:0 18px 44px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.12);
+}
+
+/* ==================== v3.7: верхний бар — матовый, без просвета ==================== */
+.nowbar{
+  background:linear-gradient(180deg,#1c2637 0%,#141d2c 55%,#0e1523 100%);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border-color:rgba(150,180,225,.18);
+  box-shadow:0 10px 26px rgba(0,0,0,.44),inset 0 1px rgba(255,255,255,.06);
+}
+
+/* ==================== v3.8: верхний бар — прозрачный + сильный блюр ==================== */
+.nowbar{
+  background:linear-gradient(180deg,rgba(40,52,78,.34),rgba(10,16,28,.46));
+  backdrop-filter:blur(36px) saturate(170%);
+  -webkit-backdrop-filter:blur(36px) saturate(170%);
+  border-color:rgba(160,190,235,.18);
+  box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.08);
+}
+
+/* ==================== v3.9: верхний бар — тёмное стекло как внизу ==================== */
+.nowbar{
+  background:linear-gradient(180deg,rgba(30,42,65,.62),rgba(8,13,23,.74));
+  backdrop-filter:blur(30px) saturate(160%);
+  -webkit-backdrop-filter:blur(30px) saturate(160%);
+  border-color:rgba(160,190,235,.17);
+  box-shadow:0 10px 28px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.08);
+}
+
+/* ==================== v4.0: верхний бар вынесен из прокрутки ====================
+   Он лежал внутри .content рядом со скроллером, и Chromium не обновлял
+   backdrop-filter при прокрутке колесом (карточки были резкими). Теперь
+   бар — position:fixed на уровне body, как нижний, поэтому стекло работает
+   одинаково. */
+.nowbar{
+  position:fixed;
+  top:119px;
+  left:258px;
+  right:7px;
+  height:43px;
+  min-height:43px;
+  margin:0;
+  z-index:45;
+  background:linear-gradient(180deg,rgba(38,47,65,.40),rgba(10,15,25,.50));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-color:rgba(160,190,235,.16);
+  box-shadow:0 18px 44px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.12);
+}
+
+/* ==================== v4.1: карточки круглее, полоса прогресса без градиента ==================== */
+.sound{border-radius:22px}
+.sound::before{border-radius:22px}
+.sound-cover{border-radius:15px}
+/* полоса «сколько идёт» — сплошная, в тон карточки (цвет берётся из обложки) */
+.progress{left:8px;right:8px;bottom:7px;background:rgba(255,255,255,.10)}
+.progress i{
+  background:var(--glow,rgba(122,167,232,.9));
+  box-shadow:0 0 8px color-mix(in srgb,var(--glow,rgba(122,167,232,.9)) 55%,transparent);
+}
+
+/* ==================== v4.2: полоса прогресса в цвет карточки, без градиента ==================== */
+.progress{background:rgba(255,255,255,.07)}
+.progress i{
+  background:#6aa9e8;
+  box-shadow:0 0 6px rgba(106,169,232,.45);
+}
+
+/* ==================== v4.3: дорожка прогресса в тон карточки, без серой полосы ==================== */
+.progress{background:rgba(16,23,36,.45)}
+.progress i{background:#5da4e6;box-shadow:none}
+
+/* ==================== v4.4: дорожка видна только у играющей карточки ==================== */
+.sound:not(.playing) .progress{opacity:0}
+.sound.playing .progress{opacity:1}
+
+/* ==================== v4.5: полоса прогресса — в цвет обложки ==================== */
+.progress i{background:var(--glow,#5da4e6);box-shadow:none}
+
+/* ==================== v5.0: список начинается под баром ====================
+   Место под бар резервируем ВНУТРИ прокручиваемого .grid (padding-top), а не
+   у .content. Так первый ряд стоит под баром, но при прокрутке карточки уходят
+   ПОД него — и бар их размывает, как нижний. */
+.content{padding-top:0}
+/* дорожка прокрутки начинается НИЖЕ бара «Сейчас играет» (бар ~43px + зазор),
+   иначе её ползунок визуально заезжает на бар */
+.grid::-webkit-scrollbar-track{margin-top:52px;margin-bottom:38px}
+
+/* v5.1: (убрано) верхнее «затухание» сетки под баром — пользователь просил
+   обычный блюр, как у нижнего бара, а не растворение карточек. */
+
+/* ==================== v5.2: кастомизация вида (окно «Настройка вида») ==================== */
+:root{--accent:#55a9ff;--radius:22px;--card-scale:1;--anim:1}
+
+/* акцентный цвет */
+.fbtn.active,.small-btn.active{
+  background:color-mix(in srgb,var(--accent) 22%,transparent);
+  border-color:color-mix(in srgb,var(--accent) 58%,transparent);
+  color:color-mix(in srgb,var(--accent) 68%,#fff);
+}
+/* эффект «КНОПОЧНЫЙ» — тёплый янтарный оттенок, чтобы отличался от БАСОВ/ЖЕСТИ */
+.fbtn.active.bass-phone{
+  background:color-mix(in srgb,#ffb45e 20%,transparent);
+  border-color:color-mix(in srgb,#ffb45e 62%,transparent);
+  color:#ffd7a6;
+}
+.fbtn.active.bass-phone .ic{color:#ffc06e}
+/* эффект «425 БАЗА» — болотно-зелёный, как индикатор рации */
+.fbtn.active.bass-radio{
+  background:color-mix(in srgb,#7fe08a 18%,transparent);
+  border-color:color-mix(in srgb,#7fe08a 55%,transparent);
+  color:#b8f2bd;
+}
+.fbtn.active.bass-radio .ic{color:#8ceb96}
+.side-btn.primary{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent));
+  box-shadow:0 5px 18px color-mix(in srgb,var(--accent) 30%,transparent);
+}
+.side-btn.primary:hover{box-shadow:0 7px 24px color-mix(in srgb,var(--accent) 42%,transparent)}
+.set.active{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.set.active::before{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 45%,#3ddc84))}
+.sound.sel{
+  border-color:color-mix(in srgb,var(--accent) 85%,transparent);
+  box-shadow:inset 0 1px rgba(255,255,255,.1),inset 0 0 0 1px color-mix(in srgb,var(--accent) 72%,transparent),0 9px 20px rgba(0,0,0,.14);
+}
+.grid.multi .sound.sel::after{background:color-mix(in srgb,var(--accent) 82%,#0a1a2e)}
+.search:focus{
+  border-color:color-mix(in srgb,var(--accent) 55%,transparent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+.range,.now-seek{accent-color:var(--accent)}
+.progress i{background:var(--glow,var(--accent));box-shadow:none}
+
+/* радиус и размер карточек */
+.sound{width:calc(132px * var(--card-scale));border-radius:var(--radius)}
+.sound::before{border-radius:var(--radius)}
+.sound-cover{border-radius:max(4px,calc(var(--radius) - 7px))}
+
+/* скорость анимаций (переходы) */
+.sound,.btn,.fbtn,.small-btn,.side-btn,.set,.new-set,.win,.cm-item{
+  transition-duration:calc(.18s * var(--anim));
+}
+
+/* выключенные эффекты */
+body.no-aurora #aurora{display:none}
+body.no-tilt .sound{transform:none!important}
+body.no-anim *,body.no-anim *::before,body.no-anim *::after{
+  animation-duration:.001s!important;animation-delay:0s!important;
+  transition-duration:.001s!important;transition-delay:0s!important;
+}
+body.no-anim .sound.playing .sound-cover,
+body.no-anim .sound.playing .sound-letter{animation:none!important}
+/* ==================== v5.3: настройка вида внутри окна (как настройки) ==================== */
+.cust-presets{display:flex;gap:8px;flex-wrap:wrap;padding:2px 2px 12px}
+.cust-preset{
+  display:flex;align-items:center;gap:8px;height:32px;padding:0 13px;border-radius:11px;cursor:pointer;
+  background:rgba(255,255,255,.045);border:1px solid rgba(160,190,235,.16);color:#c8d5e9;font-size:12px;
+  transition:background .16s ease,border-color .16s ease,transform .12s ease;
+}
+.cust-preset:hover{background:rgba(90,140,210,.16);border-color:rgba(140,190,255,.35);transform:translateY(-1px)}
+.cust-preset:active{transform:scale(.97)}
+.cust-dot{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 8px color-mix(in srgb,var(--c) 70%,transparent)}
+.cust-swatches{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding:4px 2px 12px}
+.cust-sw{
+  width:26px;height:26px;border-radius:50%;cursor:pointer;background:var(--c);
+  border:2px solid rgba(255,255,255,.14);box-shadow:0 2px 8px rgba(0,0,0,.35);
+  transition:transform .14s ease,border-color .14s ease;
+}
+.cust-sw:hover{transform:scale(1.12)}
+.cust-sw.active{border-color:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent),0 2px 10px rgba(0,0,0,.4)}
+#s-accent{
+  width:46px;height:26px;padding:0;margin-left:2px;border:1px solid rgba(160,190,235,.28);
+  border-radius:8px;background:transparent;cursor:pointer;
+}
+/* v5.4: превью фона в окне настройки вида (CSP: без инлайновых стилей) */
+#s-bg-preview{
+  display:none;width:100%;height:90px;object-fit:cover;border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);margin:4px 0 6px;
+}
+#s-bg-name{margin:0 4px 6px}
+/* ==================== v5.5: модалка — то же стекло, что и нижний бар ====================
+   Пользователь просил блюр как у .footer. Делаем фон модалки полупрозрачным,
+   с тем же блюром/сатурацией и чуть менее тёмным затемнением позади. */
+#modal-overlay{
+  background:rgba(4,7,13,.46);
+}
+#modal{
+  background:linear-gradient(180deg,rgba(38,47,65,.54),rgba(10,15,25,.64));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-color:rgba(160,190,235,.18);
+  box-shadow:0 22px 60px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.12);
+}
+body.no-blur #modal{
+  background:linear-gradient(180deg,rgba(27,38,60,.94),rgba(8,13,23,.97));
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+/* ==================== v5.6: производительность при воспроизведении ====================
+   1) полоса прогресса больше не меняет width (layout каждый кадр) — только
+      transform:scaleX (композитор, без пересчёта сетки);
+   2) пульс играющей карточки без filter:drop-shadow — он заставлял Chromium
+      перерисовывать обложку с картинкой 60 раз в секунду. */
+.progress i{
+  width:100%!important;
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:none!important;
+}
+.sound.playing .progress i{will-change:transform}
+
+.sound.playing .sound-cover{animation:iconpulse2 1.2s ease-in-out infinite}
+.sound.playing .sound-letter{animation:none}
+@keyframes iconpulse2{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.035)}
+}
+/* ==================== v5.7: анимации «волн» только у играющего трека ====================
+   Раньше 4 полоски в каждой из 44 карточек анимировали height постоянно (даже
+   скрытые) — это грузило компоновку и роняло FPS. Теперь анимация включается
+   только у playing-карточки и работает на композиторе (transform:scaleY). */
+/* v6.2: волны анимируются ТОЛЬКО transform (композитор, без layout) —
+   height-анимация роняла FPS почти вдвое. Скругление — полная капсула,
+   а задержки заданы с учётом специфичности, иначе shorthand обнулял их
+   и все полоски дёргались синхронно. */
+/* v6.3: полоски анимируются по ВЫСОТЕ, а не scaleY — иначе скругление
+   растягивалось вместе с полоской и торец становился овальным/острым.
+   Элементов мало (3–4), так что пересчёт лейаута незаметен. */
+.waves i{
+  height:4px;
+  border-radius:99px;
+  animation:none;
+}
+.sound.playing .waves i{animation:waveh .8s ease-in-out infinite}
+.sound.playing .waves i:nth-child(2){animation-delay:.12s}
+.sound.playing .waves i:nth-child(3){animation-delay:.24s}
+.sound.playing .waves i:nth-child(4){animation-delay:.36s}
+@keyframes waveh{
+  0%,100%{height:4px}
+  50%{height:10px}
+}
+@keyframes waveb2{
+  0%,100%{transform:scaleY(.28)}
+  50%{transform:scaleY(1)}
+}
+
+.now-eq i{
+  height:5px;
+  border-radius:99px;
+  animation:none;
+}
+.nowbar.playing .now-eq i{animation:eqh2 .9s ease-in-out infinite}
+.nowbar.playing .now-eq i:nth-child(2){animation-delay:.15s}
+.nowbar.playing .now-eq i:nth-child(3){animation-delay:.3s}
+@keyframes eqh2{
+  0%,100%{height:5px}
+  50%{height:12px}
+}
+
+/* эквалайзер в футере: высоту задаёт JS через scaleY */
+#eq-bars i{transform-origin:bottom center}
+/* v5.8: название трека в баре «Сейчас играет» больше не пропадает.
+   inline-block внутри .now-label с overflow:hidden/ellipsis выталкивался
+   на «вторую строку» и обрезался — оставалось только многоточие. */
+#current{display:inline}
+
+/* ==================== v6.0: движение и спецэффекты ==================== */
+/* Единые кривые: интерфейс двигается предсказуемо, «пружинка» — только у
+   мелких подтверждений (бейджи, тосты, вспышки). */
+
+:root{
+  --ease-ui:cubic-bezier(.22,.9,.3,1);
+  --ease-pop:cubic-bezier(.34,1.56,.64,1);
+}
+
+/* --- 1. плавные переходы интерфейса --- */
+.set,.nowbar,.footer,.header,.search,.range,.now-seek{transition-timing-function:var(--ease-ui)}
+.set{transition:background .18s var(--ease-ui),transform .16s var(--ease-ui),color .16s ease}
+.set:hover{transform:translateX(2px)}
+.set.active{transform:none}
+.fbtn,.small-btn,.side-btn,.btn{transition-timing-function:var(--ease-ui)}
+
+/* смена набора/поиска: сетка мягко «вдыхает», карточки въезжают каскадом */
+.grid.swap-in{animation:gridSwap .42s var(--ease-ui) both}
+@keyframes gridSwap{
+  from{opacity:0;transform:translateY(10px) scale(.995)}
+  to{opacity:1;transform:none}
+}
+
+/* --- 2. реакция карточки на воспроизведение --- */
+/* мягкое свечение вокруг играющей карточки (бокс-тень, без filter) */
+.grid:not(.multi) .sound.playing::after{
+  content:'';position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;z-index:0;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--glow,var(--accent)) 58%,transparent),
+    0 0 24px color-mix(in srgb,var(--glow,var(--accent)) 30%,transparent);
+  animation:playHalo 2.6s ease-in-out infinite;
+}
+@keyframes playHalo{0%,100%{opacity:.5}50%{opacity:1}}
+.sound.playing .sound-name{color:#eaf4ff}
+.sound.playing .sound-cover{animation:playPulse 2.4s ease-in-out infinite}
+@keyframes playPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+
+/* вспышка рамки обложки: нажатие и старт трека */
+.sound.hit .sound-cover::before,
+.sound.burst .sound-cover::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;
+  animation:coverFlash .62s ease-out both;
+}
+.sound.burst .sound-cover::before{animation-duration:.72s}
+@keyframes coverFlash{
+  0%{opacity:1;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--glow,var(--accent)) 90%,#fff 6%),inset 0 0 26px color-mix(in srgb,var(--glow,var(--accent)) 55%,transparent)}
+  100%{opacity:0;box-shadow:inset 0 0 0 2px transparent,inset 0 0 0 transparent}
+}
+
+/* --- 3. фон: aurora дышит и «оживает» во время воспроизведения --- */
+#aurora::before{
+  content:'';position:absolute;inset:-45% -12%;pointer-events:none;
+  background:linear-gradient(112deg,transparent 34%,rgba(110,180,255,.10) 47%,rgba(80,230,170,.07) 53%,transparent 68%);
+  transform:translateX(-12%) rotate(-3deg);
+  animation:aurSweep 26s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes aurSweep{to{transform:translateX(12%) rotate(3deg)}}
+#aurora::after{
+  content:'';position:absolute;inset:-18%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 62%);
+  transition:opacity .9s ease;will-change:transform,opacity;
+}
+body.is-playing #aurora::after{opacity:.55;animation:auroraBreathe 5.6s ease-in-out infinite}
+@keyframes auroraBreathe{0%,100%{transform:scale(.96)}50%{transform:scale(1.06)}}
+body.is-playing #aurora i{opacity:.22}
+
+/* --- 4. спецэффекты действий: рябь из точки нажатия --- */
+.btn,.fbtn,.small-btn,.side-btn,.new-set{position:relative;overflow:hidden}
+.ripple{
+  position:absolute;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(255,255,255,.34) 0%,rgba(255,255,255,.10) 55%,rgba(255,255,255,0) 70%);
+  transform:scale(0);animation:rippleGo .62s ease-out forwards;
+}
+@keyframes rippleGo{to{transform:scale(1);opacity:0}}
+
+/* тост подсвечивается цветом своего типа */
+.toast.success{box-shadow:0 8px 26px rgba(80,230,157,.16)}
+.toast.error{box-shadow:0 8px 26px rgba(255,110,120,.18)}
+
+/* --- 5. настройка «без анимаций»: гасим бесконечные эффекты полностью --- */
+body.no-anim #aurora::before,
+body.no-anim #aurora::after,
+body.no-anim #aurora i,
+body.no-anim .sound.playing .waves i,
+body.no-anim .nowbar.playing .now-eq i,
+body.no-anim .grid:not(.multi) .sound.playing::after,
+body.no-anim .sound.playing .sound-cover{animation:none!important}
+
+/* ==================== v6.1: мастер микрофона для голосового чата ==================== */
+.set-desc.ok{color:#7de0a4}
+.set-desc.warn{color:#e8b06a}
+
+.mic-route-head{display:flex;gap:12px;align-items:flex-start;padding:4px 4px 10px}
+.mic-route-ico{
+  flex:0 0 auto;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(85,168,255,.14);border:1px solid rgba(85,168,255,.3);color:#7fc4ff;
+}
+.mic-route-ico.warn{background:rgba(255,170,80,.12);border-color:rgba(255,170,80,.35);color:#ffba6a}
+.mic-route-ico .ic{width:19px;height:19px}
+.mic-route-title{font-size:14px;font-weight:600;color:#e8f1ff;margin-bottom:3px}
+.mic-route-line{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;padding:2px 4px 10px}
+.mic-route-chip{
+  font-size:11.5px;padding:5px 9px;border-radius:9px;flex:0 0 auto;
+  background:rgba(255,255,255,.05);border:1px solid rgba(160,190,235,.16);color:#c9d7ea;
+  max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.mic-route-chip.mid{flex:0 1 auto;min-width:0;max-width:200px}
+.mic-route-chip.active{background:rgba(80,230,157,.12);border-color:rgba(80,230,157,.42);color:#9bf0c5}
+.mic-route-arrow{color:#5f7191;font-size:13px}
+.mic-step{display:flex;gap:9px;align-items:flex-start;padding:6px 4px;color:#b9c6da;font-size:12px;line-height:1.55}
+.mic-step>b{color:#7fbfff;min-width:14px;flex:0 0 auto}
+.mic-dev-name{
+  display:inline-block;padding:3px 8px;border-radius:7px;margin:0 4px 2px 0;
+  background:rgba(85,168,255,.12);border:1px solid rgba(85,168,255,.32);color:#d4e9ff;font-weight:600;
+}
+.mic-test-meter{display:none;height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin:8px 4px 0}
+.mic-test-meter i{
+  display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left center;
+  background:linear-gradient(90deg,#4ea8ff,#50e69d);transition:transform .08s linear;
+}
+.mic-route-result{margin:8px 4px 0;font-size:12px;line-height:1.5;min-height:18px}
+.mic-route-result.ok{color:#7de0a4}
+.mic-route-result.err{color:#ff929b}
+
+@media(prefers-reduced-motion:reduce){
+  .grid.swap-in,.sound.playing .sound-cover,.grid:not(.multi) .sound.playing::after,
+  .sound.hit .sound-cover::before,.sound.burst .sound-cover::before,
+  #aurora::before,body.is-playing #aurora::after{animation:none!important}
+  .ripple{display:none}
+}
+
+/* ==================== режим «в трее»: экономим CPU/GPU ====================
+   Окно спрятано — картинку никто не видит. Гасим всё, что заставляет
+   Chromium перерисовывать кадры даже у скрытого окна:
+   — фон-сияние (канвас + 4 огромных круга, перерисовываются каждый кадр);
+   — backdrop-filter у стеклянных панелей (пересчёт блюра грузит и
+   renderer, и gpu-process сильнее всего);
+   — бесконечные анимации и переходы.
+   Звук, дакинг и глобальные хоткеи работают в другом месте и этого
+   режима не касаются. Класс ставится из main.js на hide/minimize и
+   снимается на show/restore. */
+body.tray-mode #aurora{display:none!important}
+body.tray-mode *,
+body.tray-mode *::before,
+body.tray-mode *::after{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation-play-state:paused!important;
+  transition:none!important;
+}
+
+/* ==================== режим «жидкое стекло» ====================
+   Слой .lg-layer с backdrop-filter:url(#фильтр) создаёт liquidglass.js.
+   Фоны панелей/карточек здесь намеренно почти прозрачные, иначе
+   преломление не видно; кромку и блик рисует SVG-фильтр. */
+/* старый «основной интерфейс» (фоны, рамки, тени) полностью выключается,
+   чтобы стекло не лежало поверх старого стекла */
+body.glass-liquid .glass,
+body.glass-liquid .nowbar,
+body.glass-liquid .footer,
+body.glass-liquid #modal,
+body.glass-liquid #context-menu,
+body.glass-liquid .toast,
+body.glass-liquid .sound{
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border:0;
+  box-shadow:none;
+  outline:none;
+}
+body.glass-liquid .header.glass,
+body.glass-liquid .sidebar.glass{background:transparent}
+
+/* Список карточек уходит под нижний бар, но не выходит за нижнюю границу
+   интерфейса: прокручиваемая область заканчивается на краю футера. */
+body.glass-liquid .content{
+  height:calc(100vh - 126px);
+  margin-bottom:0;
+  overflow:hidden;
+}
+body.glass-liquid .grid{padding-bottom:70px}
+body.glass-liquid .nowbar,
+body.glass-liquid .footer{background:transparent}
+body.glass-liquid #modal,
+body.glass-liquid #context-menu,
+body.glass-liquid .toast{background:transparent}
+
+/* ВАЖНО: transform/will-change на карточке делают её отдельным «backdrop root»,
+   из-за чего backdrop-filter видит только саму карточку (прозрачную), а не фон
+   за ней — преломление пропадает. В liquid-режиме отключаем 3D-наклон. */
+body.glass-liquid .sound,
+body.glass-liquid .sound:hover,
+body.glass-liquid .sound.tilt,
+body.glass-liquid .sound:active{
+  transform:none!important;
+  translate:none!important;
+  scale:none!important;
+  will-change:auto!important;
+}
+
+/* Отключаем вступительные анимации контейнеров: `animation-fill-mode: both`
+   оставляет на панели identity-матрицу transform, а она делает панель
+   отдельным backdrop root — стекло перестаёт видеть контент под собой
+   (именно поэтому «пропадал» эффект у nowbar после старта). */
+body.glass-liquid .main,
+body.glass-liquid .nowbar,
+body.glass-liquid .footer,
+body.glass-liquid #context-menu,
+body.glass-liquid #modal,
+body.glass-liquid .toast,
+body.glass-liquid .sound{animation:none!important}
+
+/* карточки: единственный фон — слой стекла, без рамки и обводки */
+body.glass-liquid .sound.playing,
+body.glass-liquid .sound.sel,
+body.glass-liquid .sound:hover{
+  background:transparent;
+  border-color:transparent;
+  box-shadow:none;
+}
+body.glass-liquid .sound:hover{
+  box-shadow:0 10px 26px rgba(0,0,0,.38),0 0 18px color-mix(in srgb,var(--glow,rgba(111,174,255,.55)) 45%,transparent);
+}
+body.glass-liquid .sound.playing{
+  outline:1px solid color-mix(in srgb,var(--glow,rgba(85,168,255,.55)) 45%,transparent);
+  outline-offset:-1px;
+}
+body.glass-liquid .sound.sel{
+  outline:2px solid rgba(85,168,255,.65);
+  outline-offset:-1px;
+}
+
+/* преломление вместо блюра: подложка модалки только затемняет, не мылит */
+body.glass-liquid #modal-overlay{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  background:rgba(3,6,12,.58);
+}
+
+/* слой преломления и тонировки (позицию/радиус задаёт JS) */
+.lg-layer{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+}
+.lg-tint{background-color:transparent}
+
+/* Производительность: любые анимации фона за стеклом заставляют Chromium
+   пересчитывать backdrop-filter каждый кадр — это и был главный источник лагов.
+   В liquid-режиме фон полностью замирает. */
+body.glass-liquid #aurora,
+body.glass-liquid #aurora *,
+body.glass-liquid #aurora::before,
+body.glass-liquid #aurora::after{animation:none!important}
+
+/* обычные вложенные стёкла не дублируют блюр в liquid-режиме */
+body.glass-liquid .search,
+body.glass-liquid .small-btn,
+body.glass-liquid .dev-dd-body,
+body.glass-liquid .dev-dd-trigger,
+body.glass-liquid .dev-item{
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+body.glass-liquid .search{background:rgba(6,11,20,.38)}
+body.glass-liquid .small-btn{background:rgba(70,86,116,.30)}
+/* выпадающие списки внутри модалок/настроек: плотная стеклянная подложка */
+body.glass-liquid .dev-dd-body{
+  background:rgba(14,24,42,.86);
+  border:1px solid rgba(150,190,255,.16);
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+}
+body.glass-liquid .dev-dd.open .dev-dd-body{padding:4px}
+
+/* переключатель режима в настройках */
+.glass-modes{gap:6px}
+.glass-modes .small-btn{height:30px;padding:0 12px;border-radius:15px}
+.glass-modes .small-btn.active{
+  background:rgba(85,168,255,.24);
+  border-color:rgba(120,185,255,.6);
+  color:#d9ebff;
+}
+
+/* ==================== Мастер настройки и обучения ==================== */
+/* ==================== МАСТЕР: НАСТРОЙКА И ОБУЧЕНИЕ ==================== */
+
+#onboard{
+  --ob-bg:#090c12;--ob-panel:#10151f;--ob-p2:#171e2b;--ob-p3:#1e2736;
+  --ob-line:#232d3f;--ob-text:#f0f4fa;--ob-dim:#9aa7bb;--ob-acc:#55a9ff;--ob-accd:#2a6cae;
+  position:fixed;inset:0;z-index:900;
+  display:grid;place-items:center;
+  animation:obFade .22s ease both;
+}
+#onboard.hidden{display:none}
+#onboard.closing{animation:obFadeOut .18s ease both}
+@keyframes obFade{from{opacity:0}}
+@keyframes obFadeOut{to{opacity:0}}
+
+.ob-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 25% 15%,rgba(85,169,255,.19),transparent 70%),
+    radial-gradient(50% 50% at 85% 90%,rgba(42,108,174,.19),transparent 70%);
+}
+.ob-overlay{
+  position:absolute;inset:0;display:grid;place-items:center;
+  padding:20px;background:rgba(4,6,10,.82);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.ob-particles{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;border-radius:inherit;
+}
+
+/* полноэкранный просмотр ролика */
+.ob-theater{
+  position:fixed;inset:0;z-index:30;display:grid;place-items:center;
+  padding:24px;background:rgba(3,5,9,.93);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  animation:obTheaterIn .28s ease both;
+}
+.ob-theater.hidden{display:none}
+.ob-theater.closing{animation:obTheaterOut .22s ease both}
+@keyframes obTheaterIn{from{opacity:0}}
+@keyframes obTheaterOut{to{opacity:0}}
+.ob-theater-stage{
+  position:relative;display:grid;place-items:center;
+  width:min(96vw,calc(92vh * 16 / 9));max-height:92vh;aspect-ratio:16/9;
+  animation:obTheaterVideoIn .38s cubic-bezier(.2,.8,.25,1) both;
+}
+.ob-theater video{
+  width:100%;height:100%;aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:16px;background:#000;
+  border:1px solid rgba(85,169,255,.28);outline:none;
+  box-shadow:0 30px 120px rgba(0,0,0,.85),0 0 90px rgba(85,169,255,.16);
+  cursor:pointer;
+}
+@keyframes obTheaterVideoIn{from{opacity:0;transform:scale(.84)}}
+.ob-theater-close{
+  position:absolute;top:14px;right:14px;z-index:2;
+  width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.2);background:rgba(10,15,24,.55);
+  color:#e6f1ff;cursor:pointer;backdrop-filter:blur(8px);
+  opacity:.55;transition:opacity .18s,background .18s,transform .12s;
+}
+.ob-theater-close:hover{opacity:1;background:rgba(85,169,255,.32)}
+.ob-theater-close:active{transform:scale(.94)}
+.ob-theater-close .ic{width:18px;height:18px}
+
+.ob-card{
+  position:relative;z-index:1;
+  width:1280px;height:820px;max-width:100%;max-height:100%;
+  display:flex;flex-direction:column;overflow:hidden;
+  border-radius:24px;border:1px solid #2a3547;
+  background:linear-gradient(180deg,#151c2a,#0f141e 40%);
+  box-shadow:0 40px 100px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);
+  animation:obIn .26s cubic-bezier(.2,.8,.25,1) both;
+  transition:filter .28s ease;
+}
+.ob-card.theatering{filter:blur(5px) brightness(.65)}
+@keyframes obIn{from{opacity:0;transform:translateY(14px) scale(.985)}}
+
+/* ---------- шапка ---------- */
+.ob-head{
+  position:relative;z-index:1;
+  flex:0 0 auto;display:flex;align-items:center;gap:16px;
+  padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.ob-logo{
+  display:flex;align-items:center;gap:10px;
+  font-weight:700;font-size:17px;color:var(--ob-text);white-space:nowrap;
+}
+.ob-eq{display:flex;gap:2px;align-items:center;height:22px}
+.ob-eq i{width:4px;border-radius:2px;background:var(--ob-acc);animation:obEq 1.2s ease-in-out infinite}
+.ob-eq i:nth-child(1){height:9px}
+.ob-eq i:nth-child(2){height:20px;animation-delay:-.4s}
+.ob-eq i:nth-child(3){height:13px;animation-delay:-.8s}
+.ob-eq i:nth-child(4){height:18px;animation-delay:-.2s}
+@keyframes obEq{50%{transform:scaleY(.45)}}
+
+.ob-badge{
+  font-size:12px;font-weight:600;padding:4px 11px;border-radius:99px;
+  background:rgba(85,169,255,.12);color:var(--ob-acc);white-space:nowrap;
+}
+.ob-tabs{
+  display:flex;gap:6px;margin:0 auto;padding:4px;
+  background:var(--ob-bg);border-radius:12px;
+}
+.ob-tabs.hidden{display:none}
+.ob-tab{
+  border:0;background:none;padding:7px 16px;border-radius:9px;
+  font:inherit;font-size:13.5px;color:var(--ob-dim);
+  display:flex;gap:8px;align-items:center;white-space:nowrap;
+  cursor:pointer;transition:background .15s,color .15s;
+}
+.ob-tab i{
+  font-style:normal;width:20px;height:20px;border-radius:50%;
+  background:var(--ob-p3);display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:var(--ob-dim);
+}
+.ob-tab.done i{background:var(--ob-accd);color:#fff}
+.ob-tab.on{background:var(--ob-p3);color:var(--ob-text)}
+.ob-tab.on i{background:var(--ob-acc);color:#04101c}
+.ob-tab:hover{color:var(--ob-text)}
+
+.ob-skip{
+  background:none;border:0;padding:8px 4px;font:inherit;font-size:13.5px;
+  color:var(--ob-dim);cursor:pointer;
+  text-decoration:underline;text-underline-offset:4px;
+  text-decoration-color:rgba(255,255,255,.14);
+}
+.ob-skip:hover{color:var(--ob-text)}
+
+/* ---------- тело ---------- */
+.ob-main{position:relative;z-index:1;flex:1;min-height:0;padding:4px 24px 14px;display:flex}
+.ob-slide{display:none;flex:1;min-width:0;min-height:0}
+.ob-slide.active{display:flex;animation:obSlideIn .32s cubic-bezier(.2,.8,.25,1) both}
+@keyframes obSlideIn{from{opacity:0;transform:translateY(10px)}}
+
+/* экран обучения */
+.ob-screen{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:clamp(12px,2.2vh,20px);
+}
+.ob-vwrap{flex:1;min-width:0;min-height:0;container-type:size;display:grid;place-items:center}
+.ob-video{
+  position:relative;
+  width:min(100cqw,calc(100cqh * 16 / 9));aspect-ratio:16/9;
+  overflow:hidden;border-radius:16px;border:1px solid var(--ob-line);
+  background:#0a0e15;
+  box-shadow:0 0 0 1px rgba(85,169,255,.1),0 24px 70px rgba(85,169,255,.12),0 20px 50px rgba(0,0,0,.6);
+  animation:obVideoIn .45s cubic-bezier(.2,.8,.25,1) both;
+}
+@keyframes obVideoIn{from{opacity:0;transform:scale(.97)}}
+.ob-video.ready{border-color:rgba(85,169,255,.28)}
+.ob-video video{display:block;width:100%;height:100%;object-fit:cover;background:#000}
+.ob-expand{
+  position:absolute;right:10px;top:10px;z-index:2;
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.18);background:rgba(8,12,20,.45);
+  color:#dbe9ff;cursor:pointer;
+  opacity:.35;backdrop-filter:blur(6px);
+  transition:opacity .2s,background .2s,border-color .2s,transform .12s;
+}
+.ob-video:hover .ob-expand,.ob-expand:focus-visible{opacity:.95}
+.ob-expand:hover{background:rgba(85,169,255,.38);border-color:rgba(85,169,255,.65)}
+.ob-expand:active{transform:scale(.94)}
+.ob-expand .ic{width:16px;height:16px}
+
+.ob-text{
+  flex:0 0 208px;height:208px;display:grid;
+  grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  gap:6px 40px;align-items:start;
+  overflow:hidden;padding-right:4px;
+  animation:obTextIn .4s .05s cubic-bezier(.2,.8,.25,1) both;
+}
+.ob-text .ob-bullets{max-height:100%;overflow:auto;padding-right:6px}
+.ob-text .ob-bullets::-webkit-scrollbar{width:6px}
+.ob-text .ob-bullets::-webkit-scrollbar-thumb{background:rgba(133,169,255,.3);border-radius:99px}
+@keyframes obTextIn{from{opacity:0;transform:translateY(8px)}}
+.ob-text.solo{grid-template-columns:1fr}
+.ob-text h2{
+  margin:0;font-weight:700;letter-spacing:-.02em;
+  font-size:clamp(23px,3.35vh,34px);line-height:1.14;color:var(--ob-text);
+}
+.ob-lead{
+  margin:8px 0 0;max-width:70ch;
+  font-size:clamp(14px,2vh,17px);line-height:1.5;color:#aeb9cc;
+}
+.ob-lead b,.ob-bullets b{color:#fff;font-weight:650}
+
+.ob-bullets{
+  margin:0;padding:0;list-style:none;
+  display:flex;flex-direction:column;gap:clamp(5px,1vh,8px);
+}
+.ob-text .ob-bullets{padding-top:2px}
+.ob-bullets li{
+  padding:9px 15px;border-radius:12px;
+  background:var(--ob-p2);
+  font-size:clamp(13.5px,2vh,16px);line-height:1.42;color:#cfd8e6;
+  animation:obItemIn .36s cubic-bezier(.2,.8,.25,1) both;
+}
+.ob-bullets li:nth-child(2){animation-delay:.05s}
+.ob-bullets li:nth-child(3){animation-delay:.1s}
+.ob-bullets li:nth-child(4){animation-delay:.15s}
+.ob-bullets li:nth-child(5){animation-delay:.2s}
+.ob-bullets li:nth-child(6){animation-delay:.25s}
+@keyframes obItemIn{from{opacity:0;transform:translateX(-6px)}}
+.ob-bullets li b{color:#fff;font-weight:650}
+.ob-hint{color:var(--ob-dim);font-size:.93em}
+
+/* плотный текст: больше строк в той же зоне */
+.ob-slide.dense .ob-bullets{gap:5px}
+.ob-slide.dense .ob-bullets li{
+  padding:6px 12px;font-size:clamp(12.5px,1.75vh,13.5px);line-height:1.36;
+}
+
+/* ---------- интерактивные клавиши на слайде «Горячие клавиши» ---------- */
+.ob-try{
+  margin-top:10px;width:max-content;max-width:100%;
+  display:flex;flex-direction:column;gap:6px;
+  padding:9px 11px 8px;border-radius:14px;
+  background:rgba(9,15,26,.55);border:1px solid var(--ob-line);
+}
+.ob-try-steps{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:#c9d6ea}
+.ob-try-step b{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:22px;height:20px;padding:0 6px;border-radius:6px;margin:0 1px;
+  font-size:11.5px;font-weight:700;color:#eaf3ff;
+  background:linear-gradient(180deg,rgba(66,86,120,.9),rgba(24,33,50,.92));
+  border:1px solid rgba(160,190,235,.24);
+  box-shadow:0 1px 0 rgba(5,9,16,.8),inset 0 1px rgba(255,255,255,.14);
+}
+.ob-try-step b.ob-prefix{
+  color:#bfe0ff;border-color:rgba(85,169,255,.42);
+  background:linear-gradient(180deg,rgba(46,74,118,.92),rgba(18,29,48,.94));
+}
+.ob-key{
+  min-width:32px;height:27px;padding:0 9px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:650;line-height:1;color:#eaf3ff;
+  background:linear-gradient(180deg,rgba(66,86,120,.9),rgba(24,33,50,.92));
+  border:1px solid rgba(160,190,235,.24);
+  box-shadow:0 2px 0 rgba(5,9,16,.8),inset 0 1px rgba(255,255,255,.14);
+}
+.ob-key.mod{
+  color:#bfe0ff;border-color:rgba(85,169,255,.42);
+  background:linear-gradient(180deg,rgba(46,74,118,.92),rgba(18,29,48,.94));
+}
+/* клавиша нажата: показать это же состояние, что и в игре */
+.ob-key.hit{
+  transform:translateY(2px);
+  background:linear-gradient(180deg,rgba(85,169,255,.55),rgba(36,78,134,.65));
+  border-color:rgba(133,193,255,.9);
+  box-shadow:0 0 16px rgba(85,169,255,.45),inset 0 1px rgba(255,255,255,.2);
+}
+.ob-plus{color:var(--ob-dim);font-size:12px;font-weight:650;padding:0 1px}
+.ob-keys-cap{
+  margin-top:1px;font-size:11.5px;color:var(--ob-dim);
+  letter-spacing:.01em;
+}
+.ob-keys-cap b{
+  color:#bfe0ff;font-weight:700;
+  padding:0 5px;border-radius:5px;
+  background:rgba(85,169,255,.14);border:1px solid rgba(85,169,255,.3);
+}
+/* живой показ того, что нажал пользователь */
+.ob-keys-live{
+  display:flex;align-items:center;flex-wrap:wrap;gap:5px;
+  min-height:27px;font-size:11.5px;color:var(--ob-dim);
+}
+.ob-keys-live .ob-key{height:24px;min-width:28px;font-size:11.5px}
+.ob-keys-live .ob-live-label{color:var(--ob-dim)}
+.ob-keys-live .ob-live-none{color:#7f8ba2;font-size:12px}
+.ob-try-status{font-size:12px;color:var(--ob-dim);min-height:16px}
+.ob-try-status.ok{color:#54d68a;font-weight:650}
+.ob-try-status.wait{color:#9ec4f0}
+
+/* заставка модуля */
+.ob-splash{
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:14px;
+}
+.ob-splash .ob-big{
+  font-size:clamp(80px,21vh,180px);font-weight:800;line-height:.9;
+  letter-spacing:-.06em;color:var(--ob-acc);
+  animation:obBigIn .55s cubic-bezier(.2,.8,.25,1) both;
+}
+@keyframes obBigIn{from{opacity:0;transform:scale(.8)}}
+.ob-splash h2{margin:0;font-size:clamp(28px,5vh,44px);font-weight:750;letter-spacing:-.03em}
+.ob-splash p{margin:0;max-width:520px;font-size:17px;line-height:1.5;color:var(--ob-dim)}
+
+/* ---------- настройка ---------- */
+.ob-setup{overflow:auto;display:none}
+.ob-setup.active{display:flex}
+.ob-setup-inner{
+  width:min(780px,100%);margin:auto;padding:6px 2px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.ob-setup-inner h1{
+  margin:0;font-size:clamp(30px,4.6vh,44px);font-weight:750;
+  letter-spacing:-.03em;line-height:1.08;
+}
+.ob-setup-inner h2{
+  margin:0;font-size:clamp(24px,3.5vh,34px);font-weight:700;
+  letter-spacing:-.02em;line-height:1.15;
+}
+.ob-welcome{text-align:center;align-items:center;gap:18px}
+.ob-welcome .ob-lead{max-width:640px}
+.ob-welcome .ob-tip{text-align:left}
+
+.ob-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.ob-chip{
+  font-size:12.5px;color:var(--ob-dim);
+  padding:7px 12px;border-radius:10px;
+  background:var(--ob-p2);border:1px solid var(--ob-line);
+}
+.ob-chip b{color:var(--ob-text);font-weight:600}
+
+.ob-tip{
+  margin:0;padding:11px 14px;border-radius:11px;
+  font-size:12.5px;line-height:1.6;color:#93a6c0;
+  background:rgba(85,169,255,.055);
+  border:1px solid rgba(85,169,255,.14);
+}
+.ob-tip b{color:#cfe4ff;font-weight:600}
+.ob-note{
+  margin:0;padding:11px 14px;border-radius:11px;
+  font-size:12.5px;line-height:1.6;color:#93a6c0;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+}
+.ob-note b{color:#e2eeff;font-weight:600}
+
+.ob-sec{
+  padding:13px 15px;border-radius:12px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);
+}
+.ob-sec-title{
+  font-size:11px;font-weight:750;letter-spacing:1.1px;text-transform:uppercase;
+  color:#8fc3ff;margin-bottom:9px;
+}
+.ob-steps{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.ob-steps li{font-size:12.5px;line-height:1.55;color:#9fb0c7}
+.ob-steps li b{color:#e2ecfa;font-weight:600}
+
+.ob-status{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:11px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+}
+.ob-status-dot{
+  width:9px;height:9px;flex:0 0 auto;border-radius:50%;
+  background:#8b9bb2;box-shadow:0 0 0 4px rgba(139,155,178,.12);
+}
+.ob-status.ok .ob-status-dot{background:#3ddc84;box-shadow:0 0 0 4px rgba(61,220,132,.14);animation:obPulse 2.4s ease-in-out infinite}
+.ob-status.warn .ob-status-dot{background:#ffb648;box-shadow:0 0 0 4px rgba(255,182,72,.14)}
+@keyframes obPulse{50%{box-shadow:0 0 0 8px rgba(61,220,132,.04)}}
+.ob-status-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ob-status-text b{font-size:13px;color:#eaf3ff}
+.ob-status-text span{font-size:11.5px;color:#8d9db4}
+
+.ob-actions-inline{display:flex;flex-wrap:wrap;gap:8px}
+.ob-btn{
+  font:inherit;font-size:13px;font-weight:600;
+  border-radius:10px;padding:10px 18px;cursor:pointer;
+  border:1px solid transparent;
+  transition:background .15s,border-color .15s,filter .15s,transform .1s;
+}
+.ob-btn:active{transform:translateY(1px)}
+.ob-btn.primary{
+  color:#04101c;background:var(--ob-acc);border-color:var(--ob-acc);
+}
+.ob-btn.primary:hover{background:#82c0ff}
+.ob-btn.ghost{
+  color:#c3d0e2;background:var(--ob-p2);border-color:var(--ob-line);
+}
+.ob-btn.ghost:hover{background:var(--ob-p3);color:#fff}
+.ob-btn:disabled{opacity:.4;cursor:default}
+
+.ob-field{display:flex;flex-direction:column;gap:6px}
+.ob-field-label{font-size:12px;color:#a8b7cc;letter-spacing:.2px}
+.ob-field-label em{font-style:normal;color:#7f8fa6}
+.ob-field select{
+  width:100%;appearance:none;-webkit-appearance:none;
+  background-color:rgba(9,14,24,.75);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:10px;padding:12px 36px 12px 13px;
+  color:#e2ecfa;font:inherit;font-size:13.5px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,#7f93ad 50%),linear-gradient(135deg,#7f93ad 50%,transparent 50%);
+  background-position:calc(100% - 18px) calc(50% + 1px),calc(100% - 13px) calc(50% + 1px);
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  outline:none;transition:border-color .15s ease;
+}
+.ob-field select:focus{border-color:rgba(85,169,255,.55)}
+.ob-field select option{background:#111a2a;color:#e2ecfa}
+
+.ob-route{
+  position:relative;overflow:hidden;
+  display:inline-flex;align-items:center;gap:9px;max-width:100%;
+  padding:12px 16px;border-radius:11px;
+  font-size:14px;font-weight:650;color:#eaf4ff;
+  background:linear-gradient(180deg,rgba(85,169,255,.18),rgba(85,169,255,.06));
+  border:1px solid rgba(85,169,255,.4);
+  box-shadow:0 0 0 3px rgba(85,169,255,.07);
+  word-break:break-word;
+}
+.ob-route::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 32%,rgba(255,255,255,.09) 50%,transparent 68%);
+  transform:translateX(-110%);animation:obShine 3.8s ease-in-out infinite;
+}
+@keyframes obShine{55%,100%{transform:translateX(110%)}}
+
+/* ---------- подвал ---------- */
+.ob-foot{
+  position:relative;z-index:1;
+  flex:0 0 auto;display:flex;align-items:center;gap:18px;
+  padding:14px 24px 18px;border-top:1px solid var(--ob-line);
+  background:#0c1119;
+}
+.ob-cap{width:210px;flex:0 0 auto;font-size:12.5px;line-height:1.45;color:var(--ob-dim)}
+.ob-cap b{display:block;font-size:13.5px;color:var(--ob-text);font-weight:650}
+.ob-prog{flex:1;display:flex;gap:8px;min-width:0}
+.ob-pseg{height:6px;border-radius:99px;background:var(--ob-p3);overflow:hidden;min-width:14px;flex:1 1 0;transition:flex-grow .35s ease}
+.ob-pseg i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#4f9dff,#9ccaff);transition:width .35s ease}
+.ob-count{
+  font-size:13px;color:var(--ob-dim);min-width:64px;text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.ob-navbtn{
+  border-radius:11px;padding:11px 22px;
+  font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  border:1px solid var(--ob-line);background:var(--ob-p2);color:var(--ob-text);
+  transition:background .15s,border-color .15s,filter .15s,transform .12s,box-shadow .15s;
+}
+.ob-navbtn:hover{border-color:var(--ob-dim);transform:translateY(-1px)}
+.ob-navbtn.pri{background:var(--ob-acc);border-color:var(--ob-acc);color:#04101c;box-shadow:0 6px 18px rgba(85,169,255,.22)}
+.ob-navbtn.pri:hover{background:#82c0ff;box-shadow:0 8px 24px rgba(85,169,255,.35)}
+.ob-navbtn:disabled{opacity:.3;cursor:default}
+
+/* ---------- анимации перелистывания ---------- */
+.ob-main.anim-next{animation:obPageNext .34s cubic-bezier(.2,.8,.25,1)}
+.ob-main.anim-back{animation:obPageBack .34s cubic-bezier(.2,.8,.25,1)}
+@keyframes obPageNext{
+  0%{opacity:.2;transform:translateX(30px)}
+  60%{opacity:1}
+  100%{opacity:1;transform:translateX(0)}
+}
+@keyframes obPageBack{
+  0%{opacity:.2;transform:translateX(-30px)}
+  60%{opacity:1}
+  100%{opacity:1;transform:translateX(0)}
+}
+.ob-navbtn.pressed{animation:obBtnPulse .32s cubic-bezier(.2,.8,.25,1)}
+@keyframes obBtnPulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(.93);filter:brightness(1.25)}
+  100%{transform:scale(1)}
+}
+.ob-tab.pressed{animation:obBtnPulse .3s cubic-bezier(.2,.8,.25,1)}
+
+/* ==================== v6.0: шапка и сайдбар — то же стекло, что у баров ====================
+   Раньше .glass давал blur(46px), а у «Сейчас играет» и футера было 18px.
+   Теперь все четыре панели выглядят одинаково. */
+.header.glass,
+.sidebar.glass{
+  background:linear-gradient(180deg,rgba(38,47,65,.40),rgba(10,15,25,.50));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-color:rgba(160,190,235,.16);
+  box-shadow:0 18px 44px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.12);
+}
+
+@media (max-width:900px){
+  .ob-card{height:100%;border-radius:18px}
+  .ob-tab{padding:7px 10px;font-size:12.5px}
+  .ob-tab span{display:none}
+  .ob-text{grid-template-columns:1fr;flex:0 1 auto;height:auto;max-height:46%;overflow:auto}
+  .ob-text.solo{grid-template-columns:1fr}
+  .ob-main{padding:4px 16px 12px}
+  .ob-head{padding:12px 16px;gap:10px}
+  .ob-badge{display:none}
+  .ob-foot{padding:12px 16px 14px;gap:10px}
+  .ob-cap{width:auto;max-width:170px}
+  .ob-navbtn{padding:10px 14px;font-size:13px}
+}
+@media (max-height:640px){
+  .ob-text{flex:0 1 auto;height:auto;max-height:none}
+  .ob-screen{overflow:auto}
+  .ob-vwrap{min-height:220px}
+}
+@media (prefers-reduced-motion:reduce){
+  #onboard *{animation:none!important;transition:none!important}
+}

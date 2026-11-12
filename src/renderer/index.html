@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'self'; img-src 'self' data:; media-src 'self' blob:" />
+  <title>SoundPulse</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- иконки: один раз рисуем спрайт, дальше ссылаемся <use href="#i-..."> -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7l10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+    <symbol id="i-bass" viewBox="0 0 24 24"><path d="M4 10v4"/><path d="M8 7v10"/><path d="M12 4v16"/><path d="M16 7v10"/><path d="M20 10v4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+    <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 17v-5a9 9 0 0 1 18 0v5"/><path d="M21 18a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h3z"/><path d="M3 18a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H3z"/></symbol>
+    <symbol id="i-ear-off" viewBox="0 0 24 24"><path d="M3 17v-4.5a9 9 0 0 1 14.2-7.4"/><path d="M21 12.5V17"/><path d="M21 18a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h3z"/><path d="M3 18a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H3z"/><path d="M3 3l18 18"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m17 9 5 6"/><path d="m22 9-5 6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="2.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-test" viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6.6L4.8 18A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-3L14 9.6V3"/><path d="M7.5 15h9"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 20 9 12l10-8z" fill="currentColor" stroke="none"/><path d="M5 5v14"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 4l10 8-10 8z" fill="currentColor" stroke="none"/><path d="M19 5v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="7" y="5" width="3.6" height="14" rx="1.4" fill="currentColor" stroke="none"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></symbol>
+    <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h9"/><circle cx="3.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3 8.8"/><path d="M3 3.8v5h5"/><path d="M12 7.5V12l3.2 1.9"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5"/><path d="M16 3h5v5"/><path d="M21 16v5h-5"/><path d="M3 16v5h5"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M8 8H3V3"/><path d="M16 8h5V3"/><path d="M21 16h-5v5"/><path d="M3 16h5v5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.6-4.6"/></symbol>
+      <symbol id="i-blur" viewBox="0 0 24 24"><path d="M12 3.2c1.9 2.1 5.6 6.4 5.6 9.6a5.6 5.6 0 0 1-11.2 0c0-3.2 3.7-7.5 5.6-9.6z"/><path d="M9.4 13.6c.2 1.3 1.2 2.3 2.6 2.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.5A2 2 0 0 1 5 5.5h3.6a2 2 0 0 1 1.4.6l1 1a2 2 0 0 0 1.4.6H19a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4L20 8a2.8 2.8 0 0 0-4-4L4 16z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.2 3 14.8 0 18"/><path d="M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-move" viewBox="0 0 24 24"><path d="M8 4v16"/><path d="M5 7l3-3 3 3"/><path d="M16 20V4"/><path d="M13 17l3 3 3-3"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.4a2 2 0 0 0 1.4-3.4 2 2 0 0 1 1.4-3.4H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/><circle cx="7.6" cy="11" r="1.2" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.4" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="7.6" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  </defs>
+</svg>
+
+<div id="bg-layer" aria-hidden="true"></div>
+
+<div id="aurora"><i></i><i></i><i></i><i></i></div>
+
+<div class="titlebar">
+  <div class="title">SoundPulse</div>
+  <div class="window-controls">
+    <button class="win" id="win-min">&#x2212;</button>
+    <button class="win" id="win-max">&#x25A1;</button>
+    <button class="win close" id="win-close">&#xD7;</button>
+  </div>
+</div>
+
+<header class="header glass">
+  <img class="logo" id="app-logo" src="logo.png" alt="SoundPulse">
+  <span class="brand">SoundPulse</span>
+  <div class="search-wrap">
+    <svg class="ic search-ic"><use href="#i-search"/></svg>
+    <input class="search" id="search" placeholder="Поиск звуков... (Enter — следующий, Ctrl+Enter — играть)">
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btn-customize" title="Настроить внешний вид"><svg class="ic"><use href="#i-palette"/></svg>Вид</button>
+    <button class="btn" id="btn-settings"><svg class="ic"><use href="#i-settings"/></svg>Настройки</button>
+  </div>
+</header>
+
+<main class="main">
+  <aside class="sidebar glass">
+    <div class="section-title">НАБОРЫ</div>
+    <div class="sets" id="sets"></div>
+    <button class="new-set" id="btn-new-set"><svg class="ic"><use href="#i-plus"/></svg>Новый набор</button>
+    <div class="sidebar-bottom">
+      <button class="side-btn primary" id="btn-add-sound"><svg class="ic"><use href="#i-plus"/></svg>Добавить звуки</button>
+      <button class="side-btn" id="btn-add-folder"><svg class="ic"><use href="#i-folder"/></svg>Папку (набор)</button>
+      <button class="side-btn" id="btn-record"><svg class="ic"><use href="#i-record"/></svg>Записать</button>
+      <button class="side-btn" id="btn-open-recordings">Открыть записи</button>
+      <button class="side-btn" id="btn-open-downloads">Открыть загрузки</button>
+    </div>
+  </aside>
+
+  <section class="content">
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<div class="nowbar">
+      <span class="now-eq"><i></i><i></i><i></i></span>
+      <div class="now-label">Сейчас играет: <strong id="current">—</strong></div>
+      <input class="now-seek" id="seek-bar" type="range" min="0" max="1000" value="0" aria-label="Перемотка">
+      <span class="now-time"><span id="seek-cur">0:00</span> / <span id="seek-all">0:00</span></span>
+      <div class="now-actions">
+        <button class="small-btn icon-only" id="btn-prev" title="Предыдущая"><svg class="ic"><use href="#i-prev"/></svg></button>
+        <button class="small-btn play" id="btn-playpause" title="Пауза / продолжить">
+          <svg class="ic ic-play"><use href="#i-play"/></svg>
+          <svg class="ic ic-pause"><use href="#i-pause"/></svg>
+          <span class="lbl-play">Плей</span><span class="lbl-pause">Пауза</span>
+        </button>
+        <button class="small-btn icon-only" id="btn-next" title="Следующая"><svg class="ic"><use href="#i-next"/></svg></button>
+        <span class="nsep"></span>
+        <button class="small-btn icon-only" id="btn-loop" title="Зациклить текущую"><svg class="ic"><use href="#i-loop"/></svg></button>
+        <button class="small-btn icon-only" id="btn-shuffle" title="Вперемешку"><svg class="ic"><use href="#i-shuffle"/></svg></button>
+        <button class="small-btn icon-only" id="btn-auto" title="Автоследующая"><svg class="ic"><use href="#i-auto"/></svg></button>
+        <span class="nsep"></span>
+        <button class="small-btn" id="btn-random"><svg class="ic"><use href="#i-dice"/></svg>Random</button>
+        <button class="small-btn" id="btn-history"><svg class="ic"><use href="#i-history"/></svg>История</button>
+      </div>
+    </div>
+
+<footer class="footer glass">
+  <div class="fgroup">
+    <button class="fbtn green active" id="f-mic" title="Играть в микрофон"><svg class="ic"><use href="#i-mic"/></svg><span class="lbl">Микрофон</span></button>
+    <button class="fbtn" id="f-overlap" title="Звуки играют одновременно"><svg class="ic"><use href="#i-layers"/></svg><span class="lbl">Внахлёст</span></button>
+    <button class="fbtn" id="f-bass" title="Пердящие: выкл / жёсткий бас / жесть"><svg class="ic"><use href="#i-bass"/></svg><span class="lbl">Пердящие</span></button>
+    <button class="fbtn muted" id="f-all" title="Играть всем сразу"><svg class="ic"><use href="#i-users"/></svg><span class="lbl">Всем</span></button>
+  </div>
+
+  <span class="fdiv"></span>
+
+  <div class="fgroup vols">
+    <label class="vol" title="Громкость для собеседников">
+      <svg class="ic"><use href="#i-volume"/></svg>
+      <input class="range" type="range" id="r-master" min="0" max="100" value="25" aria-label="Громкость в микрофон">
+      <span class="volume" id="v-master">25%</span>
+    </label>
+    <label class="vol" title="Громкость для себя">
+      <svg class="ic"><use href="#i-headphones"/></svg>
+      <input class="range" type="range" id="r-monitor" min="0" max="100" value="39" aria-label="Громкость для себя">
+      <span class="volume" id="v-monitor">39%</span>
+    </label>
+  </div>
+
+  <span class="fdiv"></span>
+
+  <div class="fgroup actions">
+    <button class="fbtn icon-only" id="f-nothear" title="Не слышу себя"><svg class="ic"><use href="#i-ear-off"/></svg></button>
+    <button class="fbtn icon-only" id="f-mute" title="Mute"><svg class="ic"><use href="#i-mute"/></svg></button>
+    <button class="fbtn danger" id="f-stop" title="Остановить всё (F8)"><svg class="ic"><use href="#i-stop"/></svg><span class="lbl">Стоп</span></button>
+    <button class="fbtn icon-only" id="f-test" title="Тест звука"><svg class="ic"><use href="#i-test"/></svg></button>
+  </div>
+
+  <div class="footer-right"><span class="eq" id="eq-bars"></span><span id="foot-count">Звуков: 0 · Играю: 0</span></div>
+</footer>
+
+<div id="context-menu" class="hidden"></div>
+
+<div id="onboard" class="hidden" role="dialog" aria-modal="true" aria-labelledby="ob-title">
+  <div class="ob-glow"></div>
+  <div class="ob-overlay">
+    <div class="ob-theater hidden" id="ob-theater" aria-hidden="true">
+      <div class="ob-theater-stage">
+        <video id="ob-theater-video" playsinline loop preload="none"></video>
+        <button class="ob-theater-close" id="ob-theater-close" title="Свернуть (Esc)" aria-label="Свернуть">
+          <svg class="ic"><use href="#i-collapse"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ob-card" id="ob-card">
+      <canvas class="ob-particles" id="ob-particles" aria-hidden="true"></canvas>
+      <header class="ob-head">
+        <div class="ob-logo"><span class="ob-eq"><i></i><i></i><i></i><i></i></span>SoundPulse</div>
+        <span class="ob-badge" id="ob-phase">Настройка</span>
+        <nav class="ob-tabs hidden" id="ob-tabs"></nav>
+        <button class="ob-skip" id="ob-skip" title="Пропустить">Пропустить</button>
+      </header>
+
+      <main class="ob-main" id="ob-body">
+
+        <!-- ================= НАСТРОЙКА ================= -->
+
+        <section class="ob-slide ob-setup" data-phase="setup" data-step="0">
+          <div class="ob-setup-inner ob-welcome">
+            <h1 id="ob-title">Здравствуйте!</h1>
+            <p class="ob-lead">SoundPulse подмешивает музыку, мемы и любые звуки в микрофон — их слышат
+              в Steam, Telegram, Zoom и в любой игре, где можно выбрать микрофон.</p>
+            <div class="ob-chips">
+              <span class="ob-chip"><b>2 минуты</b> настройка</span>
+              <span class="ob-chip"><b>5 минут</b> обучение</span>
+              <span class="ob-chip"><b>Работает</b> в любой программе</span>
+            </div>
+            <div class="ob-tip">Сначала настроим звук — 3 шага. Потом покажем, как пользоваться приложением.</div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-setup" data-phase="setup" data-step="1">
+          <div class="ob-setup-inner">
+            <h2>Виртуальный микрофон</h2>
+            <p class="ob-lead">Чтобы игра или чат услышали звук из SoundPulse, им нужен микрофон,
+              в который этот звук попадает. Обычный микрофон так не умеет — нужен <b>виртуальный</b>.</p>
+
+            <div class="ob-status" id="ob-vb-status">
+              <span class="ob-status-dot"></span>
+              <div class="ob-status-text">
+                <b id="ob-vb-title">Проверяю…</b>
+                <span id="ob-vb-sub">Смотрю, есть ли в системе виртуальное устройство</span>
+              </div>
+            </div>
+
+            <div class="ob-actions-inline">
+              <button class="ob-btn primary" id="ob-vb-install">Скачать VB-CABLE</button>
+              <button class="ob-btn ghost" id="ob-vb-have">У меня уже есть</button>
+            </div>
+
+            <div class="ob-sec">
+              <div class="ob-sec-title">Если ставишь VB-CABLE</div>
+              <ol class="ob-steps">
+                <li>Нажми «Скачать VB-CABLE» — откроется официальный сайт VB-Audio.</li>
+                <li>Скачай пакет и запусти его, нажми <b>Install Driver</b>.</li>
+                <li>На вопрос Windows «Установить драйвер?» ответь <b>Да</b>.</li>
+                <li>Вернись сюда — устройство появится в системе само.</li>
+              </ol>
+            </div>
+
+            <div class="ob-tip">
+              Уже есть <b>SteelSeries Sonar</b>, <b>VoiceMeeter</b> или другой виртуальный микрофон —
+              ничего скачивать не нужно, нажми «У меня уже есть».
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-setup" data-phase="setup" data-step="2">
+          <div class="ob-setup-inner">
+            <h2>Выбери устройства</h2>
+            <p class="ob-lead">Здесь два простых списка. Первый — <b>куда SoundPulse отправляет звук</b>,
+              его услышат в игре или чате. Второй — <b>что слышишь ты</b>.</p>
+
+            <label class="ob-field">
+              <span class="ob-field-label">Звук уходит в <em>— виртуальный микрофон</em></span>
+              <select id="ob-out-device"></select>
+            </label>
+
+            <label class="ob-field">
+              <span class="ob-field-label">Я слышу в <em>— наушники или колонки</em></span>
+              <select id="ob-spk-device"></select>
+            </label>
+
+            <p class="ob-note" id="ob-dev-note">Проверяю устройства…</p>
+            <p class="ob-tip">Ошибиться не страшно: оба списка всегда можно поменять в
+              <b>Настройки → Устройства</b>.</p>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-setup" data-phase="setup" data-step="3">
+          <div class="ob-setup-inner">
+            <h2>Выбери микрофон в игре или программе</h2>
+            <p class="ob-lead">Это последний шаг. Открой настройки звука там, где будешь говорить —
+              Steam, Telegram, Zoom, любая игра — и выбери микрофон:</p>
+
+            <div class="ob-route" id="ob-route-name">виртуальный микрофон</div>
+
+            <ul class="ob-bullets">
+              <li>Название может быть длинным — это нормально. Ищи в нём <b>CABLE</b>, <b>Sonar</b> или <b>VoiceMeeter</b>.</li>
+              <li>Если в программе два поля — микрофон и динамики, — виртуальный ставь <b>только в микрофон</b>.</li>
+              <li>Выключи <b>шумоподавление</b> и <b>автоусиление</b> — иначе программа будет резать музыку.</li>
+            </ul>
+
+            <div class="ob-tip">Проверить в любой момент: <b>Настройки → Устройства → Мастер</b> —
+              он покажет, что и где выбрать.</div>
+          </div>
+        </section>
+
+        <!-- ================= ОБУЧЕНИЕ ================= -->
+
+        <!-- Модуль 1. Кнопки -->
+
+        <section class="ob-slide ob-splash" data-phase="tour" data-group="1" data-splash="1">
+          <div class="ob-big">1</div>
+          <h2>Модуль 1. Кнопки</h2>
+          <p>Что делает каждая кнопка на панели управления.</p>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-mic.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Микрофон»</h2>
+                <p class="ob-lead">Главный переключатель: уходит звук в микрофон или остаётся только у тебя.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>Включено</b> — музыку и мемы слышат в игре, Telegram и любом голосовом чате.</li>
+              <li><b>Выключено</b> — звук играет только у тебя, собеседник его не слышит.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-overlap.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Внахлёст»</h2>
+                <p class="ob-lead">Разрешает нескольким звукам играть одновременно.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>Включено</b> — новый звук не прерывает предыдущий: можно наложить музыку и мем.</li>
+              <li><b>Выключено</b> — каждый новый звук глушит предыдущий.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-bass.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Пердящие»</h2>
+                <p class="ob-lead">Эффект баса для звука.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Нажимай, чтобы листать режимы: обычный → БАССЫ → ЖЕСТЬ → КНОПОЧНЫЙ → 425 БАЗА → выкл.</li>
+              <li><b>425 БАЗА</b> — самый тяжёлый пресет: максимальный низ и перегруз, для тех, кто хочет «взорвать» перепонки.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-fix-device.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Если звук не слышно</h2>
+                <p class="ob-lead">Почти всегда дело в выбранном устройстве, а не в самом SoundPulse.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Сначала проверь, включена ли кнопка <b>«Микрофон»</b>.</li>
+              <li>Дальше — <b>Настройки → Устройства</b>: в строке «Микрофон (выход)» должен стоять виртуальный микрофон.</li>
+              <li>Зелёная подпись под ним подскажет, какой микрофон выбрать в игре или программе.</li>
+              <li>Кнопка <b>«Мастер»</b> проверит весь путь и покажет, где ошибка.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-selfmute.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка Mute</h2>
+                <p class="ob-lead">Полная тишина для всех и для тебя.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Звук не идёт ни в микрофон, ни тебе в колонки.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-mute.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Не слышу себя»</h2>
+                <p class="ob-lead">Тишина только для тебя.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>У тебя в колонках тихо, но в микрофон звук продолжает идти — собеседник его слышит.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-stop.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Стоп»</h2>
+                <p class="ob-lead">Останавливает всё сразу.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>То же самое делает клавиша <b>F8</b>.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-test.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Кнопка «Тест»</h2>
+                <p class="ob-lead">Проверка, как звук слышится в микрофоне.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Играет выбранный звук с нужной скоростью — послушай, как он проходит в микрофон.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-random.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text solo">
+              <div class="ob-text-head">
+                <h2>Кнопка Random</h2>
+                <p class="ob-lead">Случайный звук из текущего набора.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-history.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text solo">
+              <div class="ob-text-head">
+                <h2>Кнопка «История»</h2>
+                <p class="ob-lead">Что играло последним и сколько раз.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-modes.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Режимы плеера</h2>
+                <p class="ob-lead">Три переключателя в панели «Сейчас играет».</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>Автоследующая</b> — когда звук закончился, сам включает следующий.</li>
+              <li><b>Зацикливание</b> — повторяет текущий звук по кругу.</li>
+              <li><b>Вперемешку</b> — перемешивает порядок звуков в наборе.</li>
+              <li><span class="ob-hint">Плей/пауза и переключение звуков — рядом с полосой; перемотка — сама полоса слева от кнопки «Плей».</span></li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-close.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Закрыть программу</h2>
+                <p class="ob-lead">Крестик не выключает SoundPulse молча.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>При закрытии появится выбор: <b>«Свернуть в трей»</b> или <b>«Выйти»</b>.</li>
+              <li><b>«Выйти»</b> закрывает программу полностью — звуки и хоткеи перестают работать.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-tray.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Свернуть в трей</h2>
+                <p class="ob-lead">Программа продолжает работать без окна.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Звуки и горячие клавиши действуют как обычно.</li>
+              <li><b>Играешь или сидишь в голосовом чате — лучше свернуть окно в трей:</b> так удобнее, ничего не мешает и меньше нагрузки на железо.</li>
+              <li>Нагрузка на железо заметно меньше: интерфейс не рисуется.</li>
+              <li>Вернуть окно — двойным кликом по значку SoundPulse возле часов.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Модуль 2. Песни и наборы -->
+
+        <section class="ob-slide ob-splash" data-phase="tour" data-group="2" data-splash="1">
+          <div class="ob-big">2</div>
+          <h2>Модуль 2. Песни и наборы</h2>
+          <p>Как собрать библиотеку и разложить звуки по наборам.</p>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="2">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-add.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Добавить песни и записать</h2>
+                <p class="ob-lead">Музыка, мемы и свои записи — всё в одну библиотеку.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>Перетащить</b> — брось файлы в окно SoundPulse, появятся карточки.</li>
+              <li><b>Добавить звуки</b> — кнопка слева: выбрать файлы через проводник.</li>
+              <li><b>Папку (набор)</b> — добавляет всю папку сразу и создаёт отдельный набор.</li>
+              <li><b>Записать</b> — запись с микрофона: нажми, говори, нажми «Стоп».</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="2">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-move.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Перенос между наборами</h2>
+                <p class="ob-lead">Наборы — это папки со звуками: музыка, мемы, игры.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Перетащи карточку на нужный набор — звук переедет туда.</li>
+              <li>Так же можно переносить сразу несколько выделенных звуков.</li>
+              <li>Или через правый клик → <b>«Переместить в…»</b>.</li>
+              <li>Из библиотеки звук при этом не удаляется.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="2">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-menu.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Меню правого клика</h2>
+                <p class="ob-lead">Почти всё управление звуком живёт здесь.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>Воспроизвести</b> — играет или останавливает звук.</li>
+              <li><b>Горячая клавиша</b> — назначить комбинацию.</li>
+              <li><b>Свойства</b> — имя, громкость, скорость и другое.</li>
+              <li><b>Куда играть</b> — в микрофон, в динамики или туда и туда.</li>
+              <li><b>Переместить в…</b> — в другой набор.</li>
+              <li><b>Удалить</b> — убрать из библиотеки.</li>
+              <li><span class="ob-hint">Поиск сверху: <b>Enter</b> — следующий результат, <b>Ctrl+Enter</b> — сразу играть.</span></li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Модуль 3. Настройки и горячие клавиши -->
+
+        <section class="ob-slide ob-splash" data-phase="tour" data-group="3" data-splash="1">
+          <div class="ob-big">3</div>
+          <h2>Модуль 3. Настройки и горячие клавиши</h2>
+          <p>Мастер настройки, виртуальный микрофон и управление звуками с клавиатуры.</p>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="3">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-wizard.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Мастер настройки</h2>
+                <p class="ob-lead">Проверяет весь путь звука и подсказывает, если что-то не так.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li>Открой <b>Настройки → Устройства → Мастер</b>.</li>
+              <li>Он проверит виртуальный микрофон и покажет, что выбрать в игре.</li>
+              <li>Запускать заново можно в любой момент — например, после смены наушников.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour dense" data-phase="tour" data-group="3">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-vbcable.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>VB-CABLE: голос и шум</h2>
+                <p class="ob-lead">Здесь решается, будет ли собеседник слышать твой голос вместе со звуками.</p>
+              </div>
+            <ul class="ob-bullets">
+              <li><b>VB-CABLE есть:</b> включи <b>«SoundPulse микширует мой голос»</b> и в <b>«Микрофон для голоса»</b> выбери свой микрофон — голос и звуки пойдут в кабель.</li>
+              <li>Если включено <b>«Не использовать VB-CABLE»</b>, а кабель стоит — <b>выключи</b>: иначе звук пойдёт в обход и тебя не услышат.</li>
+              <li><b>«Приглушать музыку, когда я говорю»</b> + <b>«Сила приглушения»</b> — на время речи музыка утихает, голос остаётся слышным.</li>
+              <li><b>Sonar, SteelSeries GG и похожие:</b> <b>«SoundPulse микширует мой голос» выключи</b> (иначе голос задвоится), <b>«Микрофон для голоса» → «Авто»</b>.</li>
+              <li><b>«Не использовать VB-CABLE»</b> включи, если кабеля нет и звук идёт через Sonar или другую программу.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="ob-slide ob-tour" data-phase="tour" data-group="3" data-hotkeys="1">
+          <div class="ob-screen">
+            <div class="ob-vwrap">
+              <div class="ob-video">
+                <video src="media/onboarding/tour-hotkeys.mp4" loop playsinline preload="none"></video>
+              </div>
+            </div>
+            <div class="ob-text">
+              <div class="ob-text-head">
+                <h2>Горячие клавиши</h2>
+                <p class="ob-lead">Попробуй прямо здесь: нажми префикс и клавишу песни.</p>
+                <div class="ob-try" id="ob-try">
+                  <div class="ob-try-steps">
+                    <span class="ob-try-step">1. Нажми <b class="ob-prefix" data-prefix>\</b></span>
+                    <span class="ob-try-step">2. Затем любую клавишу, например <b>P</b></span>
+                  </div>
+                  <div class="ob-keys-live" id="ob-keys-live"><span class="ob-live-none">Здесь появятся твои клавиши</span></div>
+                  <div class="ob-try-status" id="ob-keys-status">Жду нажатия…</div>
+                  <div class="ob-keys-cap">Префикс <b class="ob-prefix" data-prefix>\</b> можно поменять на любую клавишу — Настройки → Горячие клавиши</div>
+                </div>
+              </div>
+            <ul class="ob-bullets">
+              <li>Правый клик по звуку → <b>«Горячая клавиша»</b> → нажми комбинацию.</li>
+              <li><b>Одиночная клавиша после префикса</b>: удерживай <b>\</b> около 0.1 секунды, затем клавишу звука.</li>
+              <li><b>Префикс можно назначить на любую клавишу</b> — хоть <b>W</b>, хоть <b>~</b>: главное, чтобы она не мешала в игре.</li>
+              <li><b>Не перехватывать одиночные</b> — одиночные клавиши проходят мимо SoundPulse.</li>
+              <li><b>Одиночные клавиши глобально</b> — работают в фоне, но блокируют букву везде.</li>
+              <li><b>Index-хоткеи</b> — <b>Ctrl+Alt+1…0</b> играют звук по номеру.</li>
+            </ul>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="ob-foot">
+        <div class="ob-cap" id="ob-cap"></div>
+        <div class="ob-prog" id="ob-prog"></div>
+        <span class="ob-count" id="ob-count"></span>
+        <button class="ob-navbtn" id="ob-back">← Назад</button>
+        <button class="ob-navbtn pri" id="ob-next">Дальше →</button>
+      </footer>
+    </div>
+  </div>
+  </div>
+
+<div id="modal-overlay" class="hidden">
+  <div id="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
